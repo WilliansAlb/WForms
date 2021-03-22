@@ -1,0 +1,28 @@
+db.usuarios(
+	{
+		"USUARIO":"ozymandias",
+		"PASSWORD":"51770390123",
+		"FECHA_CREACION":"2021-03-20",
+		"FECHA_MODIFICACION":"2021-03-22"
+	},
+	{
+		"USUARIO":"juanito89",
+		"PASSWORD":"papitoremolino23",
+		"FECHA_CREACION":"1998-21-07"
+	},
+	{
+		"USUARIO":"yelbetto",
+		"PASSWORD":"papitoremolino23",
+		"FECHA_CREACION":"1998-21-07"
+	},
+	{
+		"USUARIO":"cristeptesico",
+		"PASSWORD":"papitoremolino23",
+		"FECHA_CREACION":"1998-21-07"
+	},
+	{
+		"USUARIO":"pepito",
+		"PASSWORD":"papitoremolino23",
+		"FECHA_CREACION":"1998-21-07"
+	}
+)
