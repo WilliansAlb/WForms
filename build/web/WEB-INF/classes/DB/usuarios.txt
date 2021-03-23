@@ -1,28 +1,51 @@
 db.usuarios(
 	{
-		"USUARIO":"ozymandias",
-		"PASSWORD":"51770390123",
-		"FECHA_CREACION":"2021-03-20",
+		"USUARIO":"yelbetto",
+		"PASSWORD":"asereje",
+		"FECHA_CREACION":"1998-21-07",
 		"FECHA_MODIFICACION":"2021-03-22"
 	},
 	{
-		"USUARIO":"juanito89",
-		"PASSWORD":"papitoremolino23",
-		"FECHA_CREACION":"1998-21-07"
-	},
-	{
-		"USUARIO":"yelbetto",
-		"PASSWORD":"papitoremolino23",
-		"FECHA_CREACION":"1998-21-07"
-	},
-	{
 		"USUARIO":"cristeptesico",
-		"PASSWORD":"papitoremolino23",
-		"FECHA_CREACION":"1998-21-07"
+		"PASSWORD":"dueleamartetanto",
+		"FECHA_CREACION":"1998-21-07",
+		"FECHA_MODIFICACION":"2021-03-22"
 	},
 	{
-		"USUARIO":"pepito",
+		"USUARIO":"monicaAyala",
+		"PASSWORD":"mazatenangolindo",
+		"FECHA_CREACION":"1998-21-07",
+		"FECHA_MODIFICACION":"2021-03-22"
+	},
+	{
+		"USUARIO":"guatsupdylan",
+		"PASSWORD":"fotos",
+		"FECHA_CREACION":"2021-03-22"
+	},
+	{
+		"USUARIO":"benshorts",
+		"PASSWORD":"fotos",
+		"FECHA_CREACION":"2021-03-22"
+	},
+	{
+		"USUARIO":"wereverwero",
+		"PASSWORD":"dumbo",
+		"FECHA_CREACION":"2021-03-21"
+	},
+	{
+		"USUARIO":"kennen",
+		"PASSWORD":"fotos",
+		"FECHA_CREACION":"2021-03-22"
+	},
+	{
+		"USUARIO":"fiora",
+		"PASSWORD":"dumbo",
+		"FECHA_CREACION":"2021-03-22"
+	},
+	{
+		"USUARIO":"papitoremolino23",
 		"PASSWORD":"papitoremolino23",
-		"FECHA_CREACION":"1998-21-07"
+		"FECHA_CREACION":"2021-03-23",
+		"FECHA_MODIFICACION":"1998-21-07"
 	}
 )

@@ -1,126 +1,32 @@
 db.formularios(
-    {
-        "ID_FORM": "$id_form1",  
-        "TITULO": "Formulario para encuesta 1",
-        "NOMBRE": "formulario_encuesta_1",
-        "TEMA": "DARK",
-        "USUARIO_CREACION": "User_Juanito",
-        "FECHA_CREACION": "1998-21-07",
-        "COMPONENTES":(
-            {
-                "ID_COMP": "$_grupo_paises",
-                "NOMBRE_CAMPO": "Pais",
-                "CLASE": "COMBO",
-                "TEXTO_VISIBLE": "Pais de Origen ",
-                "ALINEACION": "CENTRO",
-                "REQUERIDO": "SI",
-                "OPCIONES": "Guatemala|El Salvador|Honduras|OTRO"
-            },
-            {
-                "ID_COMP": "$_text_cliente",
-                "NOMBRE_CAMPO": "Cliente",
-                "CLASE": "CAMPO_TEXTO",
-                "TEXTO_VISIBLE": "Nombre de cliente ",
-                "ALINEACION": "CENTRO",
-                "REQUERIDO": "SI"
-            },
-            {
-                "ID_COMP": "$_img_cliente",
-                "CLASE": "IMAGEN",
-                "TEXTO_VISIBLE": "Nombre de cliente ",
-                "URL": "https://docs.google.com/document/d/1X6PUp0CLgZv7aBEpA2tmw-2Eo8-LqJWpKo-XZ7qlJEI/edit"
-            }
-        ), 
-        "DATOS": (
-            {
-               "NOMBRE_CAMPO" : "Campo_1", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_7" :  "VALOR_REGISTRO_N"
-            },
-            {
-               "NOMBRE_CAMPO" : "Campo_2", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_8" :  "VALOR_REGISTRO_N"
-            },
-            {
-               "NOMBRE_CAMPO" : "Campo_2", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_8" :  "VALOR_REGISTRO_N"
-            }
-        )
-    },
-    {
-        "ID_FORM": "$id_form2",  
-        "TITULO": "Formulario para encuesta 1",
-        "NOMBRE": "formulario_encuesta_1",
-        "TEMA": "DARK",
-        "USUARIO_CREACION": "User_Juanito",
-        "FECHA_CREACION": "1998-21-07",
-        "COMPONENTES":(
-            {
-                "ID_COMP": "$_grupo_paises",
-                "NOMBRE_CAMPO": "Pais",
-                "CLASE": "COMBO",
-                "TEXTO_VISIBLE": "Pais de Origen ",
-                "ALINEACION": "CENTRO",
-                "REQUERIDO": "SI",
-                "OPCIONES": "Guatemala|El Salvador|Honduras|OTRO"
-            },
-            {
-                "ID_COMP": "$_text_cliente",
-                "NOMBRE_CAMPO": "Cliente",
-                "CLASE": "CAMPO_TEXTO",
-                "TEXTO_VISIBLE": "Nombre de cliente ",
-                "ALINEACION": "CENTRO",
-                "REQUERIDO": "SI"
-            },
-            {
-                "ID_COMP": "$_img_cliente",
-                "CLASE": "IMAGEN",
-                "TEXTO_VISIBLE": "Nombre de cliente ",
-                "URL": "https://docs.google.com/document/d/1X6PUp0CLgZv7aBEpA2tmw-2Eo8-LqJWpKo-XZ7qlJEI/edit"
-            },
-            {
-                "ID_COMP": "$_text_cliente",
-                "NOMBRE_CAMPO": "Cliente",
-                "CLASE": "CAMPO_TEXTO",
-                "TEXTO_VISIBLE": "Nombre de cliente ",
-                "ALINEACION": "CENTRO",
-                "REQUERIDO": "SI"
-            },
-            {
-                "ID_COMP": "$_img_cliente",
-                "CLASE": "IMAGEN",
-                "TEXTO_VISIBLE": "Nombre de cliente ",
-                "URL": "https://docs.google.com/document/d/1X6PUp0CLgZv7aBEpA2tmw-2Eo8-LqJWpKo-XZ7qlJEI/edit"
-            }
-        ), 
-        "DATOS": (
-            {
-               "NOMBRE_CAMPO" : "Campo_1", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_7" :  "VALOR_REGISTRO_N"
-            },
-            {
-               "NOMBRE_CAMPO" : "Campo_2", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_8" :  "VALOR_REGISTRO_N"
-            },
-            {
-               "NOMBRE_CAMPO" : "Campo_2", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_8" :  "VALOR_REGISTRO_N"
-            },
-            {
-               "NOMBRE_CAMPO" : "Campo_2", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_8" :  "VALOR_REGISTRO_N"
-            },
-            {
-               "NOMBRE_CAMPO" : "Campo_2", 
-               "REGISTRO_1" :  "VALOR_REGISTRO_1",
-               "REGISTRO_8" :  "VALOR_REGISTRO_N"
-            }
-        )
-    }
+	{
+		"ID_FORM":"$_SDFA",
+		"TITULO":"asdfas",
+		"NOMBRE":"formulario_encuesta_1",
+		"TEMA":"DARK",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-23",
+		"COMPONENTES":(),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$_MinoviaPolly",
+		"TITULO":"Formulario para encuesta 1",
+		"NOMBRE":"formulario_encuesta_1",
+		"TEMA":"DARK",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-23",
+		"COMPONENTES":(),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$_panchitoCanchito",
+		"TITULO":"Formulario para encuesta 1",
+		"NOMBRE":"formulario_encuesta_1",
+		"TEMA":"DARK",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-23",
+		"COMPONENTES":(),
+		"DATOS":()
+	}
 )

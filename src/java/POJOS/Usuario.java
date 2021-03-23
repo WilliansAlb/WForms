@@ -28,6 +28,13 @@ public class Usuario {
         this.fecha = fecha;
         this.fecha_mod = fecha_mod;
     }
+    
+    public Usuario(String usuario, String password, String fecha) {
+        this.usuario = usuario;
+        this.password = password;
+        this.fecha = fecha;
+        this.fecha_mod = "";
+    }
 
     public String getFecha_mod() {
         return fecha_mod;
