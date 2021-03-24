@@ -9,6 +9,7 @@ import Analizadores.Lexer;
 import Analizadores.LexerALM;
 import Analizadores.parser;
 import Analizadores.parserALM;
+import POJOS.Componente;
 import POJOS.Formulario;
 import POJOS.Solicitud;
 import POJOS.Usuario;
@@ -49,7 +50,7 @@ public class ControladorUsuario {
         try {
             par.parse();
             ArrayList<Solicitud> halla = par.lista_solicitudes;
-            System.out.println(halla.size()+"");
+            System.out.println(halla.size() + "");
             for (int i = 0; i < halla.size(); i++) {
                 Solicitud temp = halla.get(i);
                 switch (temp.getTipo()) {
@@ -64,6 +65,15 @@ public class ControladorUsuario {
                         break;
                     case "NUEVO_FORMULARIO":
                         retorno += crearFormulario(temp);
+                        break;
+                    case "ELIMINAR_FORMULARIO":
+                        retorno += eliminarFormulario(temp);
+                        break;
+                    case "MODIFICAR_FORMULARIO":
+                        retorno += modificarFormulario(temp);
+                        break;
+                    case "AGREGAR_COMPONENTE":
+                        retorno += agregarComponente(temp);
                         break;
                     default:
                         break;
@@ -286,7 +296,7 @@ public class ControladorUsuario {
         return retorno;
     }
 
-    public String creandoFormulario(Map<String,String> mapeado) {
+    public String creandoFormulario(Map<String, String> mapeado) {
         String retorno = "";
         int posicion = -1;
         for (int i = 0; i < formsDB.size(); i++) {
@@ -307,6 +317,178 @@ public class ControladorUsuario {
         } else {
             retorno += "         \"ESTADO\":\"ERROR\",\n";
             retorno += "         \"DESCRIPCION_ERROR\":\"El formulario que intentas crear ya existe\"\n      }";
+        }
+        return retorno;
+    }
+
+    public String agregarComponente(Solicitud modificarForm) {
+        String retorno = "   <!ini_respuesta:\"AGREGAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
+        ArrayList<String> idsUs = new ArrayList<>();
+        if (!modificarForm.isTieneErrores()) {
+            for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
+                Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviados(mapeado);
+                if (mapeado.containsKey("ID") && mapeado.containsKey("NOMBRE_CAMPO") && mapeado.containsKey("FORMULARIO") &&
+                        mapeado.containsKey("CLASE")) {
+                    int posicion = -1;
+                    for (int i = 0; i < formsDB.size(); i++) {
+                        if (formsDB.get(i).getId().equals(mapeado.get("FORMULARIO"))){
+                            posicion = i;
+                            break;
+                        }
+                    }
+                    if (posicion!=-1){
+                        ArrayList<Componente> componentes = formsDB.get(posicion).getComponentes();
+                        int posicion_componente = -1;
+                        for (int i = 0; i < componentes.size(); i++) {
+                            if (componentes.get(i).getId().equals(mapeado.get("ID"))){
+                                posicion_componente = i;
+                                break;
+                            }
+                        }
+                        if (posicion_componente==-1){
+                            switch (mapeado.get("CLASE")){
+                                case "BOTON":
+                                    break;
+                                case "IMAGEN":
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                        
+                        }
+                    } else {
+                        retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
+                        retorno += "         \"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n      }";
+                    }
+                } else {
+                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,NOMBRE_CAMPO,FORMULARIO,CLASE)\"\n      }";
+                }
+                if ((j + 1) != modificarForm.getCuantas().size()) {
+                    retorno += ",\n";
+                } else {
+                    retorno += "\n";
+                }
+            }
+        } else {
+            retorno += modificarForm.getDescripcion_error() + "\n";
+        }
+        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        return retorno;
+    }
+
+    public String agregandoComponente(Map<String, String> mapeado) {
+        String retorno = "";
+        String modificados = "";
+        int posicion = -1;
+        for (int i = 0; i < formsDB.size(); i++) {
+            if (formsDB.get(i).getId().equals(mapeado.get("ID"))) {
+                posicion = i;
+            }
+        }
+        if (posicion != -1) {
+            if (mapeado.containsKey("TITULO")){
+                formsDB.get(posicion).setTitulo(mapeado.get("TITULO"));
+                modificados+= "TITULO-";
+            }
+            if (mapeado.containsKey("TEMA")){
+                formsDB.get(posicion).setTema(mapeado.get("TEMA"));
+                modificados+= "TEMA-";
+            }
+            if (mapeado.containsKey("NOMBRE")){
+                formsDB.get(posicion).setNombre(mapeado.get("NOMBRE"));
+                modificados+= "NOMBRE-";
+            }
+            retorno += "         \"ESTADO\":\"FORMULARIO MODIFICADO\",\n";
+            retorno += "         \"NOTA\":\"Los siguientes parametros del formulario "+mapeado.get("ID")+" fueron modificados "+modificados+"\"\n      }";
+        } else {
+            retorno += "         \"ESTADO\":\"ERROR\",\n";
+            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas modificar\"\n      }";
+        }
+        return retorno;
+    }
+
+    
+    public String modificarFormulario(Solicitud modificarForm) {
+        String retorno = "   <!ini_respuesta:\"MODIFICAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
+        ArrayList<String> idsUs = new ArrayList<>();
+        if (!modificarForm.isTieneErrores()) {
+            for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
+                Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviados(mapeado);
+                if (mapeado.containsKey("ID")) {
+                    if (idsUs.isEmpty()) {
+                        idsUs.add(mapeado.get("ID"));
+                        if (mapeado.containsKey("ID") && 
+                                (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
+                            retorno += modificandoFormulario(mapeado);
+                        } else {
+                            retorno += "         \"ESTADO\":\"ERROR\",\n";
+                            retorno += "         \"DESCRIPCION_ERROR\":\"Faltan algun parametro para modificar (TITULO, TEMA, NOMBRE)\"\n      }";
+                        }
+                    } else {
+                        if (idsUs.contains(mapeado.get("ID"))) {
+                            retorno += "         \"ESTADO\":\"ERROR\",\n";
+                            retorno += "         \"DESCRIPCION_ERROR\":\"El ID del formulario que se intenta ingresar ya existe\"\n      }";
+                        } else {
+                            idsUs.add(mapeado.get("ID"));
+                            if (mapeado.containsKey("ID") && 
+                                    (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
+                                retorno += modificandoFormulario(mapeado);
+                            } else {
+                                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                                retorno += "         \"DESCRIPCION_ERROR\":\"Faltan algun parametro para modificar (TITULO, TEMA, NOMBRE)\"\n      }";
+                            }
+                        }
+                    }
+                } else {
+                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,TITULO,NOMBRE,TEMA)\"\n      }";
+                }
+                if ((j + 1) != modificarForm.getCuantas().size()) {
+                    retorno += ",\n";
+                } else {
+                    retorno += "\n";
+                }
+            }
+        } else {
+            retorno += modificarForm.getDescripcion_error() + "\n";
+        }
+        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        return retorno;
+    }
+
+    public String modificandoFormulario(Map<String, String> mapeado) {
+        String retorno = "";
+        String modificados = "";
+        int posicion = -1;
+        for (int i = 0; i < formsDB.size(); i++) {
+            if (formsDB.get(i).getId().equals(mapeado.get("ID"))) {
+                posicion = i;
+            }
+        }
+        if (posicion != -1) {
+            if (mapeado.containsKey("TITULO")){
+                formsDB.get(posicion).setTitulo(mapeado.get("TITULO"));
+                modificados+= "TITULO-";
+            }
+            if (mapeado.containsKey("TEMA")){
+                formsDB.get(posicion).setTema(mapeado.get("TEMA"));
+                modificados+= "TEMA-";
+            }
+            if (mapeado.containsKey("NOMBRE")){
+                formsDB.get(posicion).setNombre(mapeado.get("NOMBRE"));
+                modificados+= "NOMBRE-";
+            }
+            retorno += "         \"ESTADO\":\"FORMULARIO MODIFICADO\",\n";
+            retorno += "         \"NOTA\":\"Los siguientes parametros del formulario "+mapeado.get("ID")+" fueron modificados "+modificados+"\"\n      }";
+        } else {
+            retorno += "         \"ESTADO\":\"ERROR\",\n";
+            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas modificar\"\n      }";
         }
         return retorno;
     }
@@ -418,6 +600,51 @@ public class ControladorUsuario {
             }
 
         }
+        return retorno;
+    }
+
+    public String eliminarFormulario(Solicitud eliminarForm) {
+        String retorno = "   <!ini_respuesta:\"ELIMINAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
+        ArrayList<String> idsUs = new ArrayList<>();
+        if (!eliminarForm.isTieneErrores()) {
+            for (int j = 0; j < eliminarForm.getCuantas().size(); j++) {
+                Map<String, String> mapeado = eliminarForm.getCuantas().get(j);
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviados(mapeado);
+                if (mapeado.containsKey("ID")) {
+                    if (idsUs.contains(mapeado.get("ID"))) {
+                        retorno += "         \"ESTADO\":\"ERROR\",\n";
+                        retorno += "         \"DESCRIPCION_ERROR\":\"Solicitud de eliminacion repetida\"\n      }";
+                    } else {
+                        idsUs.add(mapeado.get("ID"));
+                        int posicion = -1;
+                        for (int i = 0; i < formsDB.size(); i++) {
+                            if (formsDB.get(i).getId().equals(mapeado.get("ID"))) {
+                                posicion = i;
+                            }
+                        }
+                        if (posicion != -1) {
+                            formsDB.remove(posicion);
+                            retorno += "         \"ESTADO\":\"FORMULARIO ELIMINADO\"\n      }";
+                        } else {
+                            retorno += "         \"ESTADO\":\"ERROR\",\n";
+                            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas eliminar\"\n      }";
+                        }
+                    }
+                } else {
+                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el parametro más importante (ID)\"\n      }";
+                }
+                if ((j + 1) != eliminarForm.getCuantas().size()) {
+                    retorno += ",\n";
+                } else {
+                    retorno += "\n";
+                }
+            }
+        } else {
+            retorno += eliminarForm.getDescripcion_error() + "\n";
+        }
+        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
     }
 
@@ -571,7 +798,7 @@ public class ControladorUsuario {
             //exception handling left as an exercise for the reader
         }
     }
-    
+
     public void actualizarFormularios() {
         try (FileWriter fw = new FileWriter("C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/formularios.txt", false);
                 BufferedWriter bw = new BufferedWriter(fw);
