@@ -1,42 +1,32 @@
 db.formularios(
 	{
-		"ID_FORM":"$formularioMunicipalidadSanLorenzo",
+		"ID_FORM":"$form1",
 		"TITULO":"Formulario para encuesta 1",
 		"NOMBRE":"formulario_encuesta_1",
 		"TEMA":"DARK",
 		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-23",
-		"COMPONENTES":(),
-		"DATOS":()
-	},
-	{
-		"ID_FORM":"$s",
-		"TITULO":"Formulario Modificado para encuesta 1",
-		"NOMBRE":"formulario_Semana_Santa",
-		"TEMA":"DARK",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-23",
-		"COMPONENTES":(),
-		"DATOS":()
-	},
-	{
-		"ID_FORM":"$abecedario",
-		"TITULO":"Formulario para encuesta 2",
-		"NOMBRE":"formulario_encuesta_2",
-		"TEMA":"DARK",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-23",
-		"COMPONENTES":(),
-		"DATOS":()
-	},
-	{
-		"ID_FORM":"$abecedario2",
-		"TITULO":"Formulario para encuesta 2",
-		"NOMBRE":"formulario_encuesta_2",
-		"TEMA":"DARK",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-23",
-		"COMPONENTES":(),
+		"FECHA_CREACION":"2021-03-25",
+		"COMPONENTES":(
+		{
+			"ID_COMP":"$_text_cliente",
+			"NOMBRE_CAMPO":"Cliente",
+			"CLASE":"CAMPO_TEXTO",
+			"TEXTO_VISIBLE":"Nombre de cliente ",
+			"INDICE":"0",
+			"ALINEACION":"CENTRO",
+			"REQUERIDO":"SI"
+		},
+		{
+			"ID_COMP":"$_grupo_paises",
+			"NOMBRE_CAMPO":"Pais",
+			"CLASE":"CHECKBOX",
+			"TEXTO_VISIBLE":"Checalo3 ",
+			"INDICE":"1",
+			"ALINEACION":"DERECHA",
+			"REQUERIDO":"SI",
+			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
+		}
+		),
 		"DATOS":()
 	}
 )

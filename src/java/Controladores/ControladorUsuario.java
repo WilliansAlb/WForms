@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,6 +75,12 @@ public class ControladorUsuario {
                         break;
                     case "AGREGAR_COMPONENTE":
                         retorno += agregarComponente(temp);
+                        break;
+                    case "ELIMINAR_COMPONENTE":
+                        retorno += eliminarComponente(temp);
+                        break;
+                    case "MODIFICAR_COMPONENTE":
+                        retorno += modificarComponente(temp);
                         break;
                     default:
                         break;
@@ -329,42 +336,38 @@ public class ControladorUsuario {
                 Map<String, String> mapeado = modificarForm.getCuantas().get(j);
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
-                if (mapeado.containsKey("ID") && mapeado.containsKey("NOMBRE_CAMPO") && mapeado.containsKey("FORMULARIO") &&
-                        mapeado.containsKey("CLASE")) {
+                if (mapeado.containsKey("ID")
+                        && mapeado.containsKey("FORMULARIO")
+                        && mapeado.containsKey("CLASE")
+                        && mapeado.containsKey("TEXTO_VISIBLE")) {
                     int posicion = -1;
                     for (int i = 0; i < formsDB.size(); i++) {
-                        if (formsDB.get(i).getId().equals(mapeado.get("FORMULARIO"))){
+                        if (formsDB.get(i).getId().equals(mapeado.get("FORMULARIO"))) {
                             posicion = i;
                             break;
                         }
                     }
-                    if (posicion!=-1){
+                    if (posicion != -1) {
                         ArrayList<Componente> componentes = formsDB.get(posicion).getComponentes();
                         int posicion_componente = -1;
                         for (int i = 0; i < componentes.size(); i++) {
-                            if (componentes.get(i).getId().equals(mapeado.get("ID"))){
+                            if (componentes.get(i).getId().equals(mapeado.get("ID"))) {
                                 posicion_componente = i;
                                 break;
                             }
                         }
-                        if (posicion_componente==-1){
-                            switch (mapeado.get("CLASE")){
-                                case "BOTON":
-                                    break;
-                                case "IMAGEN":
-                                    break;
-                                default:
-                                    break;
-                            }
+                        if (posicion_componente == -1) {
+                            retorno += agregandoComponente(mapeado, posicion);
                         } else {
-                        
+                            retorno += "         \"ESTADO\":\"ERROR\",\n";
+                            retorno += "         \"DESCRIPCION_ERROR\":\"Ya existe un componente con el id que se envio\"\n      }";
                         }
                     } else {
-                        retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
+                        retorno += "         \"ESTADO\":\"ERROR\",\n";
                         retorno += "         \"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n      }";
                     }
                 } else {
-                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
                     retorno += "         \"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,NOMBRE_CAMPO,FORMULARIO,CLASE)\"\n      }";
                 }
                 if ((j + 1) != modificarForm.getCuantas().size()) {
@@ -380,38 +383,493 @@ public class ControladorUsuario {
         return retorno;
     }
 
-    public String agregandoComponente(Map<String, String> mapeado) {
+    public String agregandoComponente(Map<String, String> mapeado, int posicion) {
         String retorno = "";
-        String modificados = "";
-        int posicion = -1;
-        for (int i = 0; i < formsDB.size(); i++) {
-            if (formsDB.get(i).getId().equals(mapeado.get("ID"))) {
-                posicion = i;
-            }
-        }
-        if (posicion != -1) {
-            if (mapeado.containsKey("TITULO")){
-                formsDB.get(posicion).setTitulo(mapeado.get("TITULO"));
-                modificados+= "TITULO-";
-            }
-            if (mapeado.containsKey("TEMA")){
-                formsDB.get(posicion).setTema(mapeado.get("TEMA"));
-                modificados+= "TEMA-";
-            }
-            if (mapeado.containsKey("NOMBRE")){
-                formsDB.get(posicion).setNombre(mapeado.get("NOMBRE"));
-                modificados+= "NOMBRE-";
-            }
-            retorno += "         \"ESTADO\":\"FORMULARIO MODIFICADO\",\n";
-            retorno += "         \"NOTA\":\"Los siguientes parametros del formulario "+mapeado.get("ID")+" fueron modificados "+modificados+"\"\n      }";
-        } else {
-            retorno += "         \"ESTADO\":\"ERROR\",\n";
-            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas modificar\"\n      }";
+        Componente nuevo = new Componente();
+        nuevo.setClase(mapeado.get("CLASE"));
+        nuevo.setIndice(formsDB.get(posicion).getComponentes().size() + 1);
+        nuevo.setId(mapeado.get("ID"));
+        nuevo.setFormulario(mapeado.get("FORMULARIO"));
+        nuevo.setTexto_visible(mapeado.get("TEXTO_VISIBLE"));
+        switch (mapeado.get("CLASE")) {
+            case "BOTON":
+                formsDB.get(posicion).getComponentes().add(nuevo);
+                retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                break;
+            case "IMAGEN":
+                if (mapeado.containsKey("URL")) {
+                    nuevo.setUrl(mapeado.get("URL"));
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el url\"\n      }";
+                }
+                break;
+            case "CAMPO_TEXTO":
+                if (mapeado.containsKey("NOMBRE_CAMPO")) {
+                    nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+                    if (mapeado.containsKey("ALINEACION")) {
+                        nuevo.setAlineacion(mapeado.get("ALINEACION"));
+                    }
+                    if (mapeado.containsKey("REQUERIDO")) {
+                        nuevo.setRequerido(mapeado.get("REQUERIDO"));
+                    }
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                }
+                break;
+            case "AREA_TEXTO":
+                if (mapeado.containsKey("NOMBRE_CAMPO")
+                        && mapeado.containsKey("FILAS")
+                        && mapeado.containsKey("COLUMNAS")) {
+                    nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+                    nuevo.setFilas(Integer.parseInt(mapeado.get("FILAS")));
+                    nuevo.setColumnas(Integer.parseInt(mapeado.get("COLUMNAS")));
+                    if (mapeado.containsKey("ALINEACION")) {
+                        nuevo.setAlineacion(mapeado.get("ALINEACION"));
+                    }
+                    if (mapeado.containsKey("REQUERIDO")) {
+                        nuevo.setRequerido(mapeado.get("REQUERIDO"));
+                    }
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                }
+                break;
+            case "CHECKBOX":
+                if (mapeado.containsKey("NOMBRE_CAMPO")
+                        && mapeado.containsKey("OPCIONES")) {
+                    nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+                    ArrayList<String> lista_opciones = new ArrayList<>();
+                    String opciones = mapeado.get("OPCIONES");
+                    String partes[] = opciones.split("\n");
+                    lista_opciones.addAll(Arrays.asList(partes));
+                    nuevo.setOpciones(lista_opciones);
+                    if (mapeado.containsKey("ALINEACION")) {
+                        nuevo.setAlineacion(mapeado.get("ALINEACION"));
+                    }
+                    if (mapeado.containsKey("REQUERIDO")) {
+                        nuevo.setRequerido(mapeado.get("REQUERIDO"));
+                    }
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                }
+                break;
+            case "RADIO":
+                if (mapeado.containsKey("NOMBRE_CAMPO")
+                        && mapeado.containsKey("OPCIONES")) {
+                    nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+                    ArrayList<String> lista_opciones = new ArrayList<>();
+                    String opciones = mapeado.get("OPCIONES");
+                    String partes[] = opciones.split("\n");
+                    lista_opciones.addAll(Arrays.asList(partes));
+                    nuevo.setOpciones(lista_opciones);
+                    if (mapeado.containsKey("ALINEACION")) {
+                        nuevo.setAlineacion(mapeado.get("ALINEACION"));
+                    }
+                    if (mapeado.containsKey("REQUERIDO")) {
+                        nuevo.setRequerido(mapeado.get("REQUERIDO"));
+                    }
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                }
+                break;
+            case "COMBO":
+                if (mapeado.containsKey("NOMBRE_CAMPO")
+                        && mapeado.containsKey("OPCIONES")) {
+                    nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+                    ArrayList<String> lista_opciones = new ArrayList<>();
+                    String opciones = mapeado.get("OPCIONES");
+                    String partes[] = opciones.split("\n");
+                    lista_opciones.addAll(Arrays.asList(partes));
+                    nuevo.setOpciones(lista_opciones);
+                    if (mapeado.containsKey("ALINEACION")) {
+                        nuevo.setAlineacion(mapeado.get("ALINEACION"));
+                    }
+                    if (mapeado.containsKey("REQUERIDO")) {
+                        nuevo.setRequerido(mapeado.get("REQUERIDO"));
+                    }
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                }
+                break;
+            case "FICHERO":
+                if (mapeado.containsKey("NOMBRE_CAMPO")) {
+                    nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+                    if (mapeado.containsKey("ALINEACION")) {
+                        nuevo.setAlineacion(mapeado.get("ALINEACION"));
+                    }
+                    if (mapeado.containsKey("REQUERIDO")) {
+                        nuevo.setRequerido(mapeado.get("REQUERIDO"));
+                    }
+                    formsDB.get(posicion).getComponentes().add(nuevo);
+                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                }
+                break;
+            default:
+                break;
         }
         return retorno;
     }
 
-    
+    public String modificarComponente(Solicitud modificarForm) {
+        String retorno = "   <!ini_respuesta:\"AGREGAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
+        ArrayList<String> idsUs = new ArrayList<>();
+        if (!modificarForm.isTieneErrores()) {
+            for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
+                Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviados(mapeado);
+                if (mapeado.containsKey("ID")
+                        && mapeado.containsKey("FORMULARIO")) {
+                    int posicion = -1;
+                    for (int i = 0; i < formsDB.size(); i++) {
+                        if (formsDB.get(i).getId().equals(mapeado.get("FORMULARIO"))) {
+                            posicion = i;
+                            break;
+                        }
+                    }
+                    if (posicion != -1) {
+                        ArrayList<Componente> componentes = formsDB.get(posicion).getComponentes();
+                        int posicion_componente = -1;
+                        for (int i = 0; i < componentes.size(); i++) {
+                            if (componentes.get(i).getId().equals(mapeado.get("ID"))) {
+                                posicion_componente = i;
+                                break;
+                            }
+                        }
+                        if (posicion_componente != -1) {
+                            if (mapeado.size() == 2) {
+                                retorno += "         \"ESTADO\":\"SIN MODIFICAR\",\n";
+                                retorno += "         \"MOTIVO\":\"No se mando ningun parametro para modificar\"\n      }";
+                            } else {
+                                retorno += modificandoComponente(mapeado, posicion, posicion_componente);
+                            }
+                        } else {
+                            retorno += "         \"ESTADO\":\"ERROR\",\n";
+                            retorno += "         \"DESCRIPCION_ERROR\":\"Ya existe un componente con el id que se envio\"\n      }";
+                        }
+                    } else {
+                        retorno += "         \"ESTADO\":\"ERROR\",\n";
+                        retorno += "         \"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n      }";
+                    }
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede modificar el componente si no se especifica ninguno de los siguientes (ID,FORMULARIO)\"\n      }";
+                }
+                if ((j + 1) != modificarForm.getCuantas().size()) {
+                    retorno += ",\n";
+                } else {
+                    retorno += "\n";
+                }
+            }
+        } else {
+            retorno += modificarForm.getDescripcion_error() + "\n";
+        }
+        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        return retorno;
+    }
+
+    public String modificandoComponente(Map<String, String> mapeado, int posicion, int posicion_componente) {
+        String retorno = "";
+        Componente nuevo = formsDB.get(posicion).getComponentes().get(posicion_componente);
+        nuevo.setId(mapeado.get("ID"));
+        nuevo.setFormulario(mapeado.get("FORMULARIO"));
+        if (mapeado.containsKey("CLASE")) {
+            nuevo.setClase(mapeado.get("CLASE"));
+        }
+        if (mapeado.containsKey("TEXTO_VISIBLE")) {
+            nuevo.setTexto_visible(mapeado.get("TEXTO_VISIBLE"));
+        }
+        if (mapeado.containsKey("INDICE")) {
+            nuevo.setIndice(Integer.parseInt(mapeado.get("INDICE")));
+        }
+        if (mapeado.containsKey("NOMBRE_CAMPO")) {
+            nuevo.setNombre_campo(mapeado.get("NOMBRE_CAMPO"));
+        }
+        if (mapeado.containsKey("ALINEACION")) {
+            nuevo.setAlineacion(mapeado.get("ALINEACION"));
+        }
+        if (mapeado.containsKey("REQUERIDO")) {
+            nuevo.setRequerido(mapeado.get("REQUERIDO"));
+        }
+        if (mapeado.containsKey("OPCIONES")) {
+            ArrayList<String> lista_opciones = new ArrayList<>();
+            String opciones = mapeado.get("OPCIONES");
+            String partes[] = opciones.split("\n");
+            lista_opciones.addAll(Arrays.asList(partes));
+            nuevo.setOpciones(lista_opciones);
+        }
+        if (mapeado.containsKey("FILAS")) {
+            nuevo.setFilas(Integer.parseInt(mapeado.get("FILAS")));
+        }
+        if (mapeado.containsKey("COLUMNAS")) {
+            nuevo.setColumnas(Integer.parseInt(mapeado.get("COLUMNAS")));
+        }
+        if (mapeado.containsKey("URL")) {
+            nuevo.setUrl(mapeado.get("URL"));
+        }
+        retorno += modificarElComponente(nuevo,posicion,posicion_componente);
+        return retorno;
+    }
+
+    public String modificarElComponente(Componente mapeado, int pos, int pos_componente) {
+        String retorno = "";
+        Componente nuevo = new Componente();
+        nuevo.setId(mapeado.getId());
+        nuevo.setFormulario(mapeado.getFormulario());
+        nuevo.setTexto_visible(mapeado.getTexto_visible());
+        nuevo.setClase(mapeado.getClase());
+        switch (mapeado.getClase()) {
+            case "BOTON":
+                formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                if (mapeado.getIndice() != -1) {
+                    cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                }
+                retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                break;
+            case "IMAGEN":
+                if (!mapeado.getUrl().isEmpty()) {
+                    nuevo.setUrl(mapeado.getUrl());
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el url\"\n      }";
+                }
+                break;
+            case "CAMPO_TEXTO":
+                if (!mapeado.getNombre_campo().isEmpty()) {
+                    nuevo.setNombre_campo(mapeado.getNombre_campo());
+                    if (!mapeado.getAlineacion().isEmpty()) {
+                        nuevo.setAlineacion(mapeado.getAlineacion());
+                    }
+                    if (!mapeado.getRequerido().isEmpty()) {
+                        nuevo.setRequerido(mapeado.getRequerido());
+                    }
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                }
+                break;
+            case "AREA_TEXTO":
+                if (!mapeado.getNombre_campo().isEmpty()
+                        && (mapeado.getFilas()>=0)
+                        && (mapeado.getColumnas()>=0)) {
+                    nuevo.setNombre_campo(mapeado.getNombre_campo());
+                    nuevo.setFilas(mapeado.getFilas());
+                    nuevo.setColumnas(mapeado.getColumnas());
+                    if (!mapeado.getAlineacion().isEmpty()) {
+                        nuevo.setAlineacion(mapeado.getAlineacion());
+                    }
+                    if (!mapeado.getRequerido().isEmpty()) {
+                        nuevo.setRequerido(mapeado.getRequerido());
+                    }
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                }
+                break;
+            case "CHECKBOX":
+                if (!mapeado.getNombre_campo().isEmpty()
+                        && !mapeado.getOpciones().isEmpty()) {
+                    nuevo.setNombre_campo(mapeado.getNombre_campo());
+                    nuevo.setOpciones(mapeado.getOpciones());
+                    if (!mapeado.getAlineacion().isEmpty()) {
+                        nuevo.setAlineacion(mapeado.getAlineacion());
+                    }
+                    if (!mapeado.getRequerido().isEmpty()) {
+                        nuevo.setRequerido(mapeado.getRequerido());
+                    }
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                }
+                break;
+            case "RADIO":
+                if (!mapeado.getNombre_campo().isEmpty()
+                        && !mapeado.getOpciones().isEmpty()) {
+                    nuevo.setNombre_campo(mapeado.getNombre_campo());
+                    nuevo.setOpciones(mapeado.getOpciones());
+                    if (!mapeado.getAlineacion().isEmpty()) {
+                        nuevo.setAlineacion(mapeado.getAlineacion());
+                    }
+                    if (!mapeado.getRequerido().isEmpty()) {
+                        nuevo.setRequerido(mapeado.getRequerido());
+                    }
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                }
+                break;
+            case "COMBO":
+                if (!mapeado.getNombre_campo().isEmpty()
+                        && !mapeado.getOpciones().isEmpty()) {
+                    nuevo.setNombre_campo(mapeado.getNombre_campo());
+                    nuevo.setOpciones(mapeado.getOpciones());
+                    if (!mapeado.getAlineacion().isEmpty()) {
+                        nuevo.setAlineacion(mapeado.getAlineacion());
+                    }
+                    if (!mapeado.getRequerido().isEmpty()) {
+                        nuevo.setRequerido(mapeado.getRequerido());
+                    }
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                }
+                break;
+            case "FICHERO":
+                if (!mapeado.getNombre_campo().isEmpty()) {
+                    nuevo.setNombre_campo(mapeado.getNombre_campo());
+                    if (!mapeado.getAlineacion().isEmpty()) {
+                        nuevo.setAlineacion(mapeado.getAlineacion());
+                    }
+                    if (!mapeado.getRequerido().isEmpty()) {
+                        nuevo.setRequerido(mapeado.getRequerido());
+                    }
+                    formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
+                    if (mapeado.getIndice() != -1) {
+                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
+                    }
+                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                }
+                break;
+            default:
+                break;
+        }
+        return retorno;
+    }
+
+    public String cambiarIndice(int pos, int pos_comp, int indice) {
+        ArrayList<Componente> temporal = new ArrayList<>();
+        String retorno = "";
+        if (indice < formsDB.get(pos).getComponentes().size()) {
+            if (indice != pos_comp) {
+                int conteo = 0;
+                for (int i = 0; i < (formsDB.get(pos).getComponentes().size() + 1); i++) {
+                    if (indice == i) {
+                        temporal.add(formsDB.get(pos).getComponentes().get(pos_comp));
+                    } else {
+                        if (conteo != pos_comp) {
+                            temporal.add(formsDB.get(pos).getComponentes().get(conteo));
+                        }
+                        conteo++;
+                    }
+                }
+                formsDB.get(pos).setComponentes(temporal);
+                retorno += "         \"NOTA\":\"Fue cambiado el indice del componente de "+pos_comp+" a "+indice+"\",\n";
+            } else {
+                retorno += "         \"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
+            }
+        } else {
+            retorno += "         \"NOTA\":\"El indice al que intentas mover el componente no existe\",\n";
+        }
+        return retorno;
+    }
+
+    public String eliminarComponente(Solicitud eliminarComp) {
+        String retorno = "   <!ini_respuesta:\"ELIMINAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
+        ArrayList<String> idsUs = new ArrayList<>();
+        if (!eliminarComp.isTieneErrores()) {
+            for (int j = 0; j < eliminarComp.getCuantas().size(); j++) {
+                Map<String, String> mapeado = eliminarComp.getCuantas().get(j);
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviados(mapeado);
+                if (mapeado.containsKey("ID")
+                        && mapeado.containsKey("FORMULARIO")) {
+                    int posicion = -1;
+                    for (int i = 0; i < formsDB.size(); i++) {
+                        if (formsDB.get(i).getId().equals(mapeado.get("FORMULARIO"))) {
+                            posicion = i;
+                            break;
+                        }
+                    }
+                    if (posicion != -1) {
+                        ArrayList<Componente> componentes = formsDB.get(posicion).getComponentes();
+                        int posicion_componente = -1;
+                        for (int i = 0; i < componentes.size(); i++) {
+                            if (componentes.get(i).getId().equals(mapeado.get("ID"))) {
+                                posicion_componente = i;
+                                break;
+                            }
+                        }
+                        if (posicion_componente != -1) {
+                            formsDB.get(posicion).getComponentes().remove(posicion_componente);
+                            retorno += "         \"ESTADO\":\"COMPONENTE ELIMINADO\"\n      }";
+                        } else {
+                            retorno += "         \"ESTADO\":\"ERROR\",\n";
+                            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el componente que tratas de eliminar\"\n      }";
+                        }
+                    } else {
+                        retorno += "         \"ESTADO\":\"ERROR\",\n";
+                        retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que contiene el componente que tratas de eliminar\"\n      }";
+                    }
+                } else {
+                    retorno += "         \"ESTADO\":\"ERROR\",\n";
+                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede eliminar un componente sin alguno de los siguientes parametros ID,FORMULARIO\"\n      }";
+                }
+                if ((j + 1) != eliminarComp.getCuantas().size()) {
+                    retorno += ",\n";
+                } else {
+                    retorno += "\n";
+                }
+            }
+        } else {
+            retorno += eliminarComp.getDescripcion_error() + "\n";
+        }
+        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        return retorno;
+    }
+
     public String modificarFormulario(Solicitud modificarForm) {
         String retorno = "   <!ini_respuesta:\"MODIFICAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
@@ -423,8 +881,8 @@ public class ControladorUsuario {
                 if (mapeado.containsKey("ID")) {
                     if (idsUs.isEmpty()) {
                         idsUs.add(mapeado.get("ID"));
-                        if (mapeado.containsKey("ID") && 
-                                (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
+                        if (mapeado.containsKey("ID")
+                                && (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
                             retorno += modificandoFormulario(mapeado);
                         } else {
                             retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -436,8 +894,8 @@ public class ControladorUsuario {
                             retorno += "         \"DESCRIPCION_ERROR\":\"El ID del formulario que se intenta ingresar ya existe\"\n      }";
                         } else {
                             idsUs.add(mapeado.get("ID"));
-                            if (mapeado.containsKey("ID") && 
-                                    (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
+                            if (mapeado.containsKey("ID")
+                                    && (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
                                 retorno += modificandoFormulario(mapeado);
                             } else {
                                 retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -472,20 +930,20 @@ public class ControladorUsuario {
             }
         }
         if (posicion != -1) {
-            if (mapeado.containsKey("TITULO")){
+            if (mapeado.containsKey("TITULO")) {
                 formsDB.get(posicion).setTitulo(mapeado.get("TITULO"));
-                modificados+= "TITULO-";
+                modificados += "TITULO-";
             }
-            if (mapeado.containsKey("TEMA")){
+            if (mapeado.containsKey("TEMA")) {
                 formsDB.get(posicion).setTema(mapeado.get("TEMA"));
-                modificados+= "TEMA-";
+                modificados += "TEMA-";
             }
-            if (mapeado.containsKey("NOMBRE")){
+            if (mapeado.containsKey("NOMBRE")) {
                 formsDB.get(posicion).setNombre(mapeado.get("NOMBRE"));
-                modificados+= "NOMBRE-";
+                modificados += "NOMBRE-";
             }
             retorno += "         \"ESTADO\":\"FORMULARIO MODIFICADO\",\n";
-            retorno += "         \"NOTA\":\"Los siguientes parametros del formulario "+mapeado.get("ID")+" fueron modificados "+modificados+"\"\n      }";
+            retorno += "         \"NOTA\":\"Los siguientes parametros del formulario " + mapeado.get("ID") + " fueron modificados " + modificados + "\"\n      }";
         } else {
             retorno += "         \"ESTADO\":\"ERROR\",\n";
             retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas modificar\"\n      }";
@@ -813,7 +1271,57 @@ public class ControladorUsuario {
                 out.println("\t\t\"TEMA\":\"" + temp.getTema() + "\",");
                 out.println("\t\t\"USUARIO_CREACION\":\"" + temp.getUsuario() + "\",");
                 out.println("\t\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\",");
-                out.println("\t\t\"COMPONENTES\":(),");
+                if (!formsDB.get(i).getComponentes().isEmpty()) {
+                    out.println("\t\t\"COMPONENTES\":(");
+                    ArrayList<Componente> comps = formsDB.get(i).getComponentes();
+                    int conteo = 0;
+                    for (Componente compt : comps) {
+                        String posibles = "";
+                        out.println("\t\t{");
+                        out.println("\t\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
+                        if (!compt.getNombre_campo().isEmpty()) {
+                            out.println("\t\t\t\"NOMBRE_CAMPO\":\"" + compt.getNombre_campo() + "\",");
+                        }
+                        out.println("\t\t\t\"CLASE\":\"" + compt.getClase() + "\",");
+                        out.println("\t\t\t\"TEXTO_VISIBLE\":\"" + compt.getTexto_visible() + "\",");
+                        posibles += "\t\t\t\"INDICE\":\"" + (conteo) + "\",\n";
+                        if (!compt.getAlineacion().isEmpty()) {
+                            posibles += "\t\t\t\"ALINEACION\":\"" + compt.getAlineacion() + "\",\n";
+                        }
+                        if (!compt.getRequerido().isEmpty()) {
+                            posibles += "\t\t\t\"REQUERIDO\":\"" + compt.getRequerido() + "\",\n";
+                        }
+                        if (!compt.getOpciones().isEmpty()) {
+                            posibles += "\t\t\t\"OPCIONES\" : \"";
+                            for (int j = 0; j < compt.getOpciones().size(); j++) {
+                                posibles += compt.getOpciones().get(j);
+                                if ((j + 1) != compt.getOpciones().size()) {
+                                    posibles += "|";
+                                }
+                            }
+                            posibles += "\",\n";
+                        }
+                        if (compt.getFilas()!=-1) {
+                            posibles += "\t\t\t\"FILAS\":\"" + compt.getFilas() + "\",\n";
+                        }
+                        if (compt.getColumnas()!=-1) {
+                            posibles += "\t\t\t\"COLUMNAS\":\"" + compt.getColumnas()+ "\",\n";
+                        }
+                        if (!compt.getUrl().isEmpty()) {
+                            posibles += "\t\t\t\"URL\":\"" + compt.getUrl()+ "\",\n";
+                        }
+                        out.println(posibles.substring(0, posibles.length() - 2));
+                        if ((conteo+1) == comps.size()) {
+                            out.println("\t\t}");
+                        } else {
+                            out.println("\t\t},");
+                        }
+                        conteo++;
+                    }
+                    out.println("\t\t),");
+                } else {
+                    out.println("\t\t\"COMPONENTES\":(),");
+                }
                 out.println("\t\t\"DATOS\":()");
                 if (i + 1 != formsDB.size()) {
                     out.println("\t},");

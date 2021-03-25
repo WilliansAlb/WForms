@@ -884,7 +884,7 @@ class CUP$parserALM$actions {
 		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)).left;
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)).value;
-		comp_temporal.setIndice((int)e1);
+		comp_temporal.setIndice(Integer.parseInt(e1.toString()));
               CUP$parserALM$result = parser.getSymbolFactory().newSymbol("parametro_indice",17, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-6)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
