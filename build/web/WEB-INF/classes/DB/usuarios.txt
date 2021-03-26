@@ -23,7 +23,7 @@ db.usuarios(
 		"FECHA_CREACION":"2021-03-22"
 	},
 	{
-		"USUARIO":"benshorts",
+		"USUARIO":"ozymandias",
 		"PASSWORD":"fotos",
 		"FECHA_CREACION":"2021-03-22"
 	},

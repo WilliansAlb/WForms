@@ -17,12 +17,21 @@ db.formularios(
 			"REQUERIDO":"SI"
 		},
 		{
+			"ID_COMP":"$_text_cliente2",
+			"NOMBRE_CAMPO":"Cliente2",
+			"CLASE":"CAMPO_TEXTO",
+			"TEXTO_VISIBLE":"Nombre de cliente ",
+			"INDICE":"1",
+			"ALINEACION":"CENTRO",
+			"REQUERIDO":"SI"
+		},
+		{
 			"ID_COMP":"$_grupo_paises",
 			"NOMBRE_CAMPO":"Pais",
-			"CLASE":"CHECKBOX",
-			"TEXTO_VISIBLE":"Checalo3 ",
-			"INDICE":"1",
-			"ALINEACION":"DERECHA",
+			"CLASE":"COMBO",
+			"TEXTO_VISIBLE":"Pais de Origen ",
+			"INDICE":"2",
+			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI",
 			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
 		}

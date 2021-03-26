@@ -479,6 +479,14 @@ public class parser extends java_cup.runtime.lr_parser {
         if (lista_temporal.containsKey(key)){
             temporal.setTieneErrores(true);
             temporal.setDescripcion_error(temporal.getDescripcion_error()+"Existe ya un parametro para "+key+" y se está intentando enviar otro: "+valor+"\n");
+            lista_temporal.put("ERROR","PARAMETROS REPETIDOS");
+            String tem = lista_temporal.get(key);
+            if (lista_temporal.get(key).equals("OPCIONES")){
+                tem += "\t"+valor;
+            } else {
+                tem += "\n"+valor;
+            }
+            lista_temporal.put(key,tem);
         } else {
             lista_temporal.put(key,valor);
         }

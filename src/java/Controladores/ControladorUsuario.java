@@ -51,7 +51,6 @@ public class ControladorUsuario {
         try {
             par.parse();
             ArrayList<Solicitud> halla = par.lista_solicitudes;
-            System.out.println(halla.size() + "");
             for (int i = 0; i < halla.size(); i++) {
                 Solicitud temp = halla.get(i);
                 switch (temp.getTipo()) {
@@ -171,9 +170,9 @@ public class ControladorUsuario {
     public String crearUsuario2(Solicitud crearU) {
         String retorno = "   <!ini_respuesta:\"CREAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!crearU.isTieneErrores()) {
-            for (int j = 0; j < crearU.getCuantas().size(); j++) {
-                Map<String, String> mapeado = crearU.getCuantas().get(j);
+        for (int j = 0; j < crearU.getCuantas().size(); j++) {
+            Map<String, String> mapeado = crearU.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("USUARIO")) {
@@ -216,9 +215,12 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += crearU.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -246,9 +248,9 @@ public class ControladorUsuario {
     public String crearFormulario(Solicitud crearU) {
         String retorno = "   <!ini_respuesta:\"NUEVO_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!crearU.isTieneErrores()) {
-            for (int j = 0; j < crearU.getCuantas().size(); j++) {
-                Map<String, String> mapeado = crearU.getCuantas().get(j);
+        for (int j = 0; j < crearU.getCuantas().size(); j++) {
+            Map<String, String> mapeado = crearU.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")) {
@@ -295,9 +297,13 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += crearU.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -331,9 +337,9 @@ public class ControladorUsuario {
     public String agregarComponente(Solicitud modificarForm) {
         String retorno = "   <!ini_respuesta:\"AGREGAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!modificarForm.isTieneErrores()) {
-            for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
-                Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+        for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
+            Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")
@@ -375,9 +381,12 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += modificarForm.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -533,9 +542,9 @@ public class ControladorUsuario {
     public String modificarComponente(Solicitud modificarForm) {
         String retorno = "   <!ini_respuesta:\"AGREGAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!modificarForm.isTieneErrores()) {
-            for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
-                Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+        for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
+            Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")
@@ -580,9 +589,12 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += modificarForm.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -627,7 +639,7 @@ public class ControladorUsuario {
         if (mapeado.containsKey("URL")) {
             nuevo.setUrl(mapeado.get("URL"));
         }
-        retorno += modificarElComponente(nuevo,posicion,posicion_componente);
+        retorno += modificarElComponente(nuevo, posicion, posicion_componente);
         return retorno;
     }
 
@@ -680,8 +692,8 @@ public class ControladorUsuario {
                 break;
             case "AREA_TEXTO":
                 if (!mapeado.getNombre_campo().isEmpty()
-                        && (mapeado.getFilas()>=0)
-                        && (mapeado.getColumnas()>=0)) {
+                        && (mapeado.getFilas() >= 0)
+                        && (mapeado.getColumnas() >= 0)) {
                     nuevo.setNombre_campo(mapeado.getNombre_campo());
                     nuevo.setFilas(mapeado.getFilas());
                     nuevo.setColumnas(mapeado.getColumnas());
@@ -806,7 +818,7 @@ public class ControladorUsuario {
                     }
                 }
                 formsDB.get(pos).setComponentes(temporal);
-                retorno += "         \"NOTA\":\"Fue cambiado el indice del componente de "+pos_comp+" a "+indice+"\",\n";
+                retorno += "         \"NOTA\":\"Fue cambiado el indice del componente de " + pos_comp + " a " + indice + "\",\n";
             } else {
                 retorno += "         \"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
             }
@@ -819,9 +831,9 @@ public class ControladorUsuario {
     public String eliminarComponente(Solicitud eliminarComp) {
         String retorno = "   <!ini_respuesta:\"ELIMINAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!eliminarComp.isTieneErrores()) {
-            for (int j = 0; j < eliminarComp.getCuantas().size(); j++) {
-                Map<String, String> mapeado = eliminarComp.getCuantas().get(j);
+        for (int j = 0; j < eliminarComp.getCuantas().size(); j++) {
+            Map<String, String> mapeado = eliminarComp.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")
@@ -862,9 +874,12 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += eliminarComp.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -873,9 +888,9 @@ public class ControladorUsuario {
     public String modificarFormulario(Solicitud modificarForm) {
         String retorno = "   <!ini_respuesta:\"MODIFICAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!modificarForm.isTieneErrores()) {
-            for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
-                Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+        for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
+            Map<String, String> mapeado = modificarForm.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")) {
@@ -912,10 +927,14 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += modificarForm.getDescripcion_error() + "\n";
         }
+
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
     }
@@ -954,9 +973,9 @@ public class ControladorUsuario {
     public String modificarUsuario(Solicitud crearU) {
         String retorno = "   <!ini_respuesta:\"MODIFICAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!crearU.isTieneErrores()) {
-            for (int j = 0; j < crearU.getCuantas().size(); j++) {
-                Map<String, String> mapeado = crearU.getCuantas().get(j);
+        for (int j = 0; j < crearU.getCuantas().size(); j++) {
+            Map<String, String> mapeado = crearU.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("USUARIO_ANTIGUO")) {
@@ -1003,10 +1022,14 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += crearU.getDescripcion_error() + "\n";
         }
+
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
     }
@@ -1064,9 +1087,9 @@ public class ControladorUsuario {
     public String eliminarFormulario(Solicitud eliminarForm) {
         String retorno = "   <!ini_respuesta:\"ELIMINAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!eliminarForm.isTieneErrores()) {
-            for (int j = 0; j < eliminarForm.getCuantas().size(); j++) {
-                Map<String, String> mapeado = eliminarForm.getCuantas().get(j);
+        for (int j = 0; j < eliminarForm.getCuantas().size(); j++) {
+            Map<String, String> mapeado = eliminarForm.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")) {
@@ -1098,9 +1121,12 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += eliminarForm.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -1109,9 +1135,9 @@ public class ControladorUsuario {
     public String eliminarUsuario(Solicitud crearU) {
         String retorno = "   <!ini_respuesta:\"ELIMINAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
-        if (!crearU.isTieneErrores()) {
-            for (int j = 0; j < crearU.getCuantas().size(); j++) {
-                Map<String, String> mapeado = crearU.getCuantas().get(j);
+        for (int j = 0; j < crearU.getCuantas().size(); j++) {
+            Map<String, String> mapeado = crearU.getCuantas().get(j);
+            if (!mapeado.containsKey("ERROR")) {
                 retorno += "      {\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("USUARIO")) {
@@ -1142,9 +1168,12 @@ public class ControladorUsuario {
                 } else {
                     retorno += "\n";
                 }
+            } else {
+                retorno += "      {\n";
+                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
-        } else {
-            retorno += crearU.getDescripcion_error() + "\n";
         }
         retorno += "         ]\n      }\n   <fin_respuesta!>\n";
         return retorno;
@@ -1301,17 +1330,17 @@ public class ControladorUsuario {
                             }
                             posibles += "\",\n";
                         }
-                        if (compt.getFilas()!=-1) {
+                        if (compt.getFilas() != -1) {
                             posibles += "\t\t\t\"FILAS\":\"" + compt.getFilas() + "\",\n";
                         }
-                        if (compt.getColumnas()!=-1) {
-                            posibles += "\t\t\t\"COLUMNAS\":\"" + compt.getColumnas()+ "\",\n";
+                        if (compt.getColumnas() != -1) {
+                            posibles += "\t\t\t\"COLUMNAS\":\"" + compt.getColumnas() + "\",\n";
                         }
                         if (!compt.getUrl().isEmpty()) {
-                            posibles += "\t\t\t\"URL\":\"" + compt.getUrl()+ "\",\n";
+                            posibles += "\t\t\t\"URL\":\"" + compt.getUrl() + "\",\n";
                         }
                         out.println(posibles.substring(0, posibles.length() - 2));
-                        if ((conteo+1) == comps.size()) {
+                        if ((conteo + 1) == comps.size()) {
                             out.println("\t\t}");
                         } else {
                             out.println("\t\t},");
@@ -1342,6 +1371,51 @@ public class ControladorUsuario {
         for (Map.Entry<String, String> entry : mapeado.entrySet()) {
             llaves.add(entry.getKey());
             valores.add(entry.getValue());
+        }
+        for (int i = (llaves.size() - 1); i >= 0; i--) {
+            ingresados += "            \t\"" + llaves.get(i) + "\": \"" + valores.get(i) + "\"";
+            if (i == 0) {
+                ingresados += "\n";
+            } else {
+                ingresados += ",\n";
+            }
+        }
+        ingresados += "                 },\n";
+        return ingresados;
+    }
+
+    public String obtenerParametrosEnviadosConRepetidos(Map<String, String> mapeado) {
+        String ingresados = "         \"PARAMETROS_ENVIADOS\":\n                 {\n";
+        ArrayList<String> llaves = new ArrayList<>();
+        ArrayList<String> valores = new ArrayList<>();
+        for (Map.Entry<String, String> entry : mapeado.entrySet()) {
+            if (!entry.getKey().equals("ERROR")) {
+                String partes[];
+                if (entry.getKey().equals("OPCIONES")) {
+                    partes = entry.getValue().split("\t");
+                } else {
+                    partes = entry.getValue().split("\n");
+                }
+                if (partes.length > 1) {
+                    for (int i = 0; i < partes.length; i++) {
+                        if (entry.getKey().equals("OPCIONES")) {
+                            llaves.add(entry.getKey() + "-REPETIDO");
+                            valores.add(partes[i].replace('\n', '|'));
+                        } else {
+                            llaves.add(entry.getKey() + "-REPETIDO");
+                            valores.add(partes[i]);
+                        }
+                    }
+                } else {
+                    if (entry.getKey().equals("OPCIONES")) {
+                        llaves.add(entry.getKey());
+                        valores.add(entry.getValue().replace('\n', '|'));
+                    } else {
+                        llaves.add(entry.getKey());
+                        valores.add(entry.getValue());
+                    }
+                }
+            }
         }
         for (int i = (llaves.size() - 1); i >= 0; i--) {
             ingresados += "            \t\"" + llaves.get(i) + "\": \"" + valores.get(i) + "\"";
