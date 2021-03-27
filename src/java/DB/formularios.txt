@@ -1,27 +1,18 @@
 db.formularios(
 	{
 		"ID_FORM":"$form1",
-		"TITULO":"Formulario para encuesta 1",
+		"TITULO":"Formulario para encuesta: 1",
 		"NOMBRE":"formulario_encuesta_1",
-		"TEMA":"DARK",
+		"TEMA":"Blue",
 		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-25",
+		"FECHA_CREACION":"2021-03-26",
 		"COMPONENTES":(
 		{
 			"ID_COMP":"$_text_cliente",
 			"NOMBRE_CAMPO":"Cliente",
 			"CLASE":"CAMPO_TEXTO",
-			"TEXTO_VISIBLE":"Nombre de cliente ",
+			"TEXTO_VISIBLE":"Nombre de cliente:",
 			"INDICE":"0",
-			"ALINEACION":"CENTRO",
-			"REQUERIDO":"SI"
-		},
-		{
-			"ID_COMP":"$_text_cliente2",
-			"NOMBRE_CAMPO":"Cliente2",
-			"CLASE":"CAMPO_TEXTO",
-			"TEXTO_VISIBLE":"Nombre de cliente ",
-			"INDICE":"1",
 			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI"
 		},
@@ -29,13 +20,100 @@ db.formularios(
 			"ID_COMP":"$_grupo_paises",
 			"NOMBRE_CAMPO":"Pais",
 			"CLASE":"COMBO",
-			"TEXTO_VISIBLE":"Pais de Origen ",
-			"INDICE":"2",
+			"TEXTO_VISIBLE":"Pais de Origen:",
+			"INDICE":"1",
 			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI",
 			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
+		},
+		{
+			"ID_COMP":"$_boton_submit1",
+			"CLASE":"BOTON",
+			"TEXTO_VISIBLE":"SUBMIT",
+			"INDICE":"2"
+		},
+		{
+			"ID_COMP":"$_comediantes",
+			"NOMBRE_CAMPO":"formulario_comediantes",
+			"CLASE":"RADIO",
+			"TEXTO_VISIBLE":"Los mejores comediantes",
+			"INDICE":"3",
+			"ALINEACION":"DERECHA",
+			"REQUERIDO":"NO",
+			"OPCIONES" : "Ibrahim Salem|Camilo Diaz|Camilo Sanchez|Otro"
 		}
 		),
+		"DATOS":(
+		{
+			"NOMBRE_CAMPO":"Pais",
+			"ID_COMP":"$_grupo_paises",
+			"REGISTRO_0" : "Guatemala",
+			"REGISTRO_1" : "Guatemala",
+			"REGISTRO_2" : "Guatemala",
+			"REGISTRO_3" : "El Salvador",
+			"REGISTRO_4" : "Honduras",
+			"REGISTRO_5" : "Guatemala"
+
+		},
+		{
+			"NOMBRE_CAMPO":"Cliente",
+			"ID_COMP":"$_text_cliente",
+			"REGISTRO_0" : "Jose",
+			"REGISTRO_1" : "Juan",
+			"REGISTRO_2" : "Pepe",
+			"REGISTRO_3" : "Willians Alberto",
+			"REGISTRO_4" : "Camilo Diaz",
+			"REGISTRO_5" : "El mago"
+
+		}
+		)
+	},
+	{
+		"ID_FORM":"$form2",
+		"TITULO":"Formulario para encuesta: 1",
+		"NOMBRE":"formulario_encuesta_1",
+		"TEMA":"Dark",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-26",
+		"COMPONENTES":(
+		{
+			"ID_COMP":"$_grupo_paises5",
+			"NOMBRE_CAMPO":"Pais",
+			"CLASE":"COMBO",
+			"TEXTO_VISIBLE":"Pais de Origen:",
+			"INDICE":"0",
+			"ALINEACION":"CENTRO",
+			"REQUERIDO":"SI",
+			"OPCIONES" : "Guatemala: City|El Salvador|Honduras|OTRO"
+		}
+		),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$form3",
+		"TITULO":"Formulario para encuesta: 1",
+		"NOMBRE":"formulario_encuesta_1",
+		"TEMA":"White",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-26",
+		"COMPONENTES":(
+		{
+			"ID_COMP":"$_boton_submit",
+			"CLASE":"BOTON",
+			"TEXTO_VISIBLE":"SUBMIT",
+			"INDICE":"0"
+		}
+		),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$formularioDiaDeLasMadres",
+		"TITULO":"Opiniones acerca de la festividad",
+		"NOMBRE":"form_madre",
+		"TEMA":"White",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-26",
+		"COMPONENTES":(),
 		"DATOS":()
 	}
 )

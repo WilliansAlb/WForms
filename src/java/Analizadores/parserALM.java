@@ -35,7 +35,7 @@ public class parserALM extends java_cup.runtime.lr_parser {
   /** Production table. */
   protected static final short _production_table[][] = 
     unpackFromStrings(new String[] {
-    "\000\106\000\002\002\004\000\002\002\006\000\002\002" +
+    "\000\107\000\002\002\004\000\002\002\006\000\002\002" +
     "\006\000\002\003\007\000\002\003\005\000\002\004\007" +
     "\000\002\004\005\000\002\041\010\000\002\045\002\000" +
     "\002\045\012\000\002\042\011\000\002\043\011\000\002" +
@@ -46,17 +46,18 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\016\003\000\002\016\003\000\002\016\003\000\002\016" +
     "\003\000\002\016\003\000\002\016\003\000\002\016\003" +
     "\000\002\016\003\000\002\016\003\000\002\016\003\000" +
-    "\002\016\003\000\002\046\003\000\002\046\003\000\002" +
-    "\046\003\000\002\020\011\000\002\021\011\000\002\047" +
-    "\003\000\002\047\003\000\002\047\003\000\002\047\003" +
-    "\000\002\047\003\000\002\022\011\000\002\023\011\000" +
+    "\002\016\003\000\002\047\003\000\002\047\003\000\002" +
+    "\047\003\000\002\020\011\000\002\021\011\000\002\050" +
+    "\003\000\002\050\003\000\002\050\003\000\002\050\003" +
+    "\000\002\050\003\000\002\022\011\000\002\023\011\000" +
     "\002\024\011\000\002\025\011\000\002\027\011\000\002" +
     "\026\011\000\002\037\005\000\002\037\003\000\002\030" +
     "\011\000\002\031\011\000\002\032\011\000\002\015\011" +
     "\000\002\033\002\000\002\033\007\000\002\033\005\000" +
-    "\002\034\013\000\002\040\005\000\002\040\003\000\002" +
-    "\035\011\000\002\036\003\000\002\036\003\000\002\036" +
-    "\003\000\002\036\003\000\002\036\003" });
+    "\002\034\023\000\002\040\004\000\002\046\002\000\002" +
+    "\046\004\000\002\035\011\000\002\036\003\000\002\036" +
+    "\003\000\002\036\003\000\002\036\003\000\002\036\003" +
+    "" });
 
   /** Access to production table. */
   public short[][] production_table() {return _production_table;}
@@ -64,20 +65,20 @@ public class parserALM extends java_cup.runtime.lr_parser {
   /** Parse-action table. */
   protected static final short[][] _action_table = 
     unpackFromStrings(new String[] {
-    "\000\376\000\006\056\005\057\004\001\002\000\004\013" +
-    "\333\001\002\000\004\013\010\001\002\000\004\002\007" +
+    "\000\u0107\000\006\056\005\057\004\001\002\000\004\013" +
+    "\344\001\002\000\004\013\010\001\002\000\004\002\007" +
     "\001\002\000\004\002\001\001\002\000\004\026\011\001" +
     "\002\000\004\004\017\001\002\000\006\014\014\032\013" +
     "\001\002\000\004\026\015\001\002\000\004\002\000\001" +
-    "\002\000\004\004\017\001\002\000\004\027\330\001\002" +
-    "\000\004\017\322\001\002\000\004\032\021\001\002\000" +
+    "\002\000\004\004\017\001\002\000\004\027\341\001\002" +
+    "\000\004\017\333\001\002\000\004\032\021\001\002\000" +
     "\004\004\023\001\002\000\004\032\037\001\002\000\004" +
     "\021\024\001\002\000\004\004\025\001\002\000\004\005" +
-    "\026\001\002\000\004\004\027\001\002\000\014\007\032" +
-    "\015\034\016\033\031\030\033\031\001\002\000\006\004" +
-    "\uffbc\012\uffbc\001\002\000\006\004\uffc0\012\uffc0\001\002" +
-    "\000\006\004\uffbe\012\uffbe\001\002\000\006\004\uffbd\012" +
-    "\uffbd\001\002\000\006\004\uffbf\012\uffbf\001\002\000\004" +
+    "\026\001\002\000\004\004\027\001\002\000\014\007\033" +
+    "\015\034\016\032\031\031\033\030\001\002\000\006\004" +
+    "\uffbf\012\uffbf\001\002\000\006\004\uffbb\012\uffbb\001\002" +
+    "\000\006\004\uffbc\012\uffbc\001\002\000\006\004\uffbd\012" +
+    "\uffbd\001\002\000\006\004\uffbe\012\uffbe\001\002\000\004" +
     "\004\036\001\002\000\004\032\ufff1\001\002\000\004\004" +
     "\041\001\002\000\004\032\053\001\002\000\004\022\042" +
     "\001\002\000\004\004\043\001\002\000\004\005\044\001" +
@@ -128,8 +129,8 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\002\000\004\005\170\001\002\000\004\004\171\001\002" +
     "\000\004\031\172\001\002\000\004\004\173\001\002\000" +
     "\006\027\uffca\032\uffca\001\002\000\004\005\175\001\002" +
-    "\000\004\004\176\001\002\000\014\007\032\015\034\016" +
-    "\033\031\030\033\031\001\002\000\004\004\200\001\002" +
+    "\000\004\004\176\001\002\000\014\007\033\015\034\016" +
+    "\032\031\031\033\030\001\002\000\004\004\200\001\002" +
     "\000\006\027\uffd1\032\uffd1\001\002\000\004\005\202\001" +
     "\002\000\004\004\203\001\002\000\004\011\204\001\002" +
     "\000\004\004\205\001\002\000\006\027\uffcf\032\uffcf\001" +
@@ -141,10 +142,10 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\000\004\005\221\001\002\000\004\004\222\001\002\000" +
     "\004\031\223\001\002\000\004\004\224\001\002\000\006" +
     "\027\uffd2\032\uffd2\001\002\000\004\005\226\001\002\000" +
-    "\004\004\227\001\002\000\014\007\032\015\034\016\033" +
-    "\031\030\033\031\001\002\000\006\004\233\012\232\001" +
-    "\002\000\006\004\uffcc\012\uffcc\001\002\000\014\007\032" +
-    "\015\034\016\033\031\030\033\031\001\002\000\006\027" +
+    "\004\004\227\001\002\000\014\007\033\015\034\016\032" +
+    "\031\031\033\030\001\002\000\006\004\233\012\232\001" +
+    "\002\000\006\004\uffcc\012\uffcc\001\002\000\014\007\033" +
+    "\015\034\016\032\031\031\033\030\001\002\000\006\027" +
     "\uffce\032\uffce\001\002\000\006\004\uffcd\012\uffcd\001\002" +
     "\000\004\005\236\001\002\000\004\004\237\001\002\000" +
     "\004\010\240\001\002\000\004\004\241\001\002\000\006" +
@@ -161,42 +162,46 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\000\010\014\uffc7\026\266\032\uffc7\001\002\000\004\004" +
     "\274\001\002\000\006\014\271\032\270\001\002\000\004" +
     "\026\272\001\002\000\004\027\uffc8\001\002\000\004\004" +
-    "\274\001\002\000\004\027\317\001\002\000\004\030\275" +
+    "\274\001\002\000\004\027\330\001\002\000\004\030\275" +
     "\001\002\000\004\004\276\001\002\000\004\005\277\001" +
     "\002\000\004\004\300\001\002\000\010\015\051\031\047" +
     "\033\046\001\002\000\004\004\302\001\002\000\004\032" +
-    "\303\001\002\000\004\004\306\001\002\000\006\027\uffc2" +
-    "\032\uffc2\001\002\000\006\027\uffc4\032\315\001\002\000" +
-    "\004\062\307\001\002\000\004\004\310\001\002\000\004" +
-    "\005\311\001\002\000\004\004\312\001\002\000\014\007" +
-    "\032\015\034\016\033\031\030\033\031\001\002\000\004" +
-    "\004\314\001\002\000\006\027\uffc1\032\uffc1\001\002\000" +
-    "\004\004\306\001\002\000\006\027\uffc3\032\uffc3\001\002" +
-    "\000\006\014\uffc6\032\uffc6\001\002\000\004\027\321\001" +
-    "\002\000\006\014\uffc5\032\uffc5\001\002\000\004\004\323" +
-    "\001\002\000\004\005\324\001\002\000\004\004\325\001" +
-    "\002\000\004\033\326\001\002\000\004\004\327\001\002" +
-    "\000\004\032\ufff4\001\002\000\006\014\ufffe\032\ufffe\001" +
-    "\002\000\004\027\332\001\002\000\006\014\ufffd\032\ufffd" +
-    "\001\002\000\004\026\334\001\002\000\004\004\342\001" +
-    "\002\000\006\014\337\032\336\001\002\000\004\026\340" +
-    "\001\002\000\004\002\uffff\001\002\000\004\004\342\001" +
-    "\002\000\004\032\353\001\002\000\004\044\345\001\002" +
-    "\000\004\027\344\001\002\000\006\014\ufffc\032\ufffc\001" +
-    "\002\000\004\004\346\001\002\000\004\005\347\001\002" +
-    "\000\004\004\350\001\002\000\004\015\351\001\002\000" +
-    "\004\004\352\001\002\000\004\032\ufff7\001\002\000\004" +
-    "\004\355\001\002\000\004\032\364\001\002\000\004\045" +
-    "\356\001\002\000\004\004\357\001\002\000\004\005\360" +
-    "\001\002\000\004\004\361\001\002\000\010\015\051\031" +
-    "\047\033\046\001\002\000\004\004\363\001\002\000\004" +
-    "\032\ufff6\001\002\000\004\004\077\001\002\000\006\027" +
-    "\ufff9\032\366\001\002\000\004\004\370\001\002\000\004" +
-    "\027\ufffa\001\002\000\004\046\371\001\002\000\004\004" +
-    "\372\001\002\000\004\005\373\001\002\000\004\004\374" +
-    "\001\002\000\004\016\375\001\002\000\004\004\376\001" +
-    "\002\000\004\027\ufff8\001\002\000\004\027\u0100\001\002" +
-    "\000\006\014\ufffb\032\ufffb\001\002" });
+    "\303\001\002\000\004\004\304\001\002\000\004\020\305" +
+    "\001\002\000\004\004\306\001\002\000\004\005\307\001" +
+    "\002\000\004\004\310\001\002\000\004\033\311\001\002" +
+    "\000\004\004\312\001\002\000\004\032\313\001\002\000" +
+    "\004\004\316\001\002\000\006\027\uffc2\032\325\001\002" +
+    "\000\004\027\uffc4\001\002\000\004\062\317\001\002\000" +
+    "\004\004\320\001\002\000\004\005\321\001\002\000\004" +
+    "\004\322\001\002\000\014\007\033\015\034\016\032\031" +
+    "\031\033\030\001\002\000\004\004\324\001\002\000\006" +
+    "\027\uffc0\032\uffc0\001\002\000\004\004\316\001\002\000" +
+    "\004\027\uffc3\001\002\000\004\027\uffc1\001\002\000\006" +
+    "\014\uffc6\032\uffc6\001\002\000\004\027\332\001\002\000" +
+    "\006\014\uffc5\032\uffc5\001\002\000\004\004\334\001\002" +
+    "\000\004\005\335\001\002\000\004\004\336\001\002\000" +
+    "\004\033\337\001\002\000\004\004\340\001\002\000\004" +
+    "\032\ufff4\001\002\000\006\014\ufffe\032\ufffe\001\002\000" +
+    "\004\027\343\001\002\000\006\014\ufffd\032\ufffd\001\002" +
+    "\000\004\026\345\001\002\000\004\004\353\001\002\000" +
+    "\006\014\350\032\347\001\002\000\004\026\351\001\002" +
+    "\000\004\002\uffff\001\002\000\004\004\353\001\002\000" +
+    "\004\032\364\001\002\000\004\044\356\001\002\000\004" +
+    "\027\355\001\002\000\006\014\ufffc\032\ufffc\001\002\000" +
+    "\004\004\357\001\002\000\004\005\360\001\002\000\004" +
+    "\004\361\001\002\000\004\015\362\001\002\000\004\004" +
+    "\363\001\002\000\004\032\ufff7\001\002\000\004\004\366" +
+    "\001\002\000\004\032\375\001\002\000\004\045\367\001" +
+    "\002\000\004\004\370\001\002\000\004\005\371\001\002" +
+    "\000\004\004\372\001\002\000\010\015\051\031\047\033" +
+    "\046\001\002\000\004\004\374\001\002\000\004\032\ufff6" +
+    "\001\002\000\004\004\077\001\002\000\006\027\ufff9\032" +
+    "\377\001\002\000\004\004\u0101\001\002\000\004\027\ufffa" +
+    "\001\002\000\004\046\u0102\001\002\000\004\004\u0103\001" +
+    "\002\000\004\005\u0104\001\002\000\004\004\u0105\001\002" +
+    "\000\004\016\u0106\001\002\000\004\004\u0107\001\002\000" +
+    "\004\027\ufff8\001\002\000\004\027\u0109\001\002\000\006" +
+    "\014\ufffb\032\ufffb\001\002" });
 
   /** Access to parse-action table. */
   public short[][] action_table() {return _action_table;}
@@ -204,9 +209,9 @@ public class parserALM extends java_cup.runtime.lr_parser {
   /** <code>reduce_goto</code> table. */
   protected static final short[][] _reduce_table = 
     unpackFromStrings(new String[] {
-    "\000\376\000\004\002\005\001\001\000\002\001\001\000" +
+    "\000\u0107\000\004\002\005\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\004" +
-    "\003\011\001\001\000\006\005\330\006\017\001\001\000" +
+    "\003\011\001\001\000\006\005\341\006\017\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\006" +
     "\005\015\006\017\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\004\007\021\001\001\000\002" +
@@ -216,7 +221,7 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\004\010\037\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
-    "\000\004\046\047\001\001\000\002\001\001\000\002\001" +
+    "\000\004\047\047\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\004\011\053\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
@@ -240,10 +245,10 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\004\047\157\001\001\000\002\001\001\000" +
+    "\001\001\000\004\050\157\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
-    "\001\000\002\001\001\000\004\046\164\001\001\000\002" +
+    "\001\000\002\001\001\000\004\047\164\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\004\036\176\001" +
@@ -268,33 +273,36 @@ public class parserALM extends java_cup.runtime.lr_parser {
     "\132\032\133\044\254\001\001\000\002\001\001\000\002" +
     "\001\001\000\004\015\257\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\004\033\266\001\001\000\004\034\317\001" +
+    "\001\001\000\004\033\266\001\001\000\004\034\330\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\004\034\272\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
-    "\000\004\046\300\001\001\000\002\001\001\000\002\001" +
-    "\001\000\006\035\303\040\304\001\001\000\002\001\001" +
+    "\000\004\047\300\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\004\036\312\001\001" +
-    "\000\002\001\001\000\002\001\001\000\004\035\315\001" +
+    "\002\001\001\000\002\001\001\000\006\035\313\040\314" +
+    "\001\001\000\004\046\325\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\004\036\322\001\001\000\002\001\001\000" +
+    "\002\001\001\000\006\035\313\040\326\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
-    "\001\000\004\004\334\001\001\000\006\041\376\042\340" +
-    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
-    "\001\000\006\041\342\042\340\001\001\000\002\001\001" +
-    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\002\001\001\000\002\001\001\000\004\043" +
-    "\353\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\002\001\001\000\002\001\001\000\004\046" +
-    "\361\001\001\000\002\001\001\000\002\001\001\000\004" +
-    "\013\364\001\001\000\004\045\366\001\001\000\002\001" +
+    "\001\001\000\004\004\345\001\001\000\006\041\u0107\042" +
+    "\351\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\006\041\353\042\351\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001" });
+    "\002\001\001\000\002\001\001\000\002\001\001\000\004" +
+    "\043\364\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\004" +
+    "\047\372\001\001\000\002\001\001\000\002\001\001\000" +
+    "\004\013\375\001\001\000\004\045\377\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
+    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001" });
 
   /** Access to <code>reduce_goto</code> table. */
   public short[][] reduce_table() {return _reduce_table;}
@@ -338,10 +346,12 @@ public class parserALM extends java_cup.runtime.lr_parser {
     public ArrayList<Usuario> listado_usuarios = new ArrayList<>();
     public ArrayList<Formulario> listado_formularios = new ArrayList<>();
     public ArrayList<Componente> listado_componentes = new ArrayList<>();
+    public ArrayList<String> reg = new ArrayList<>();
 
     public Usuario usuario_temporal = new Usuario();
     public Formulario form_temporal = new Formulario();
     public Componente comp_temporal = new Componente();
+    public Registro reg_temporal = new Registro();
 
     public Symbol getS(){
         return this.sym;
@@ -753,7 +763,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipo_junto",36, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipo_junto",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -765,7 +775,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipo_junto",36, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipo_junto",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -777,7 +787,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipo_junto",36, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipo_junto",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -813,7 +823,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",38, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -825,7 +835,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",38, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -837,7 +847,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",38, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -849,7 +859,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",38, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -861,7 +871,7 @@ class CUP$parserALM$actions {
 		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).right;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.peek()).value;
 		RESULT = e1.toString();
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",37, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("tipos_de_clases",38, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
@@ -1016,7 +1026,7 @@ class CUP$parserALM$actions {
           case 59: // bloque_datos ::= bloque_datos COMA LLAVEA parametros_datos LLAVEC 
             {
               Object RESULT =null;
-
+		form_temporal.getRegistros().add(reg_temporal); reg_temporal = new Registro();
               CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_datos",25, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-4)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
@@ -1025,49 +1035,67 @@ class CUP$parserALM$actions {
           case 60: // bloque_datos ::= LLAVEA parametros_datos LLAVEC 
             {
               Object RESULT =null;
-
+		form_temporal.getRegistros().add(reg_temporal); reg_temporal = new Registro();
               CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_datos",25, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-2)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 61: // parametros_datos ::= COMILLAS NOMBREC COMILLAS DOSP COMILLAS tipo_junto COMILLAS COMA bloque_registros 
+          case 61: // parametros_datos ::= COMILLAS NOMBREC COMILLAS DOSP COMILLAS tipo_junto COMILLAS COMA COMILLAS IDC COMILLAS DOSP COMILLAS ID COMILLAS COMA bloque_registros 
             {
               Object RESULT =null;
-
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("parametros_datos",26, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-8)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-11)).left;
+		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-11)).right;
+		String e1 = (String)((java_cup.runtime.Symbol) CUP$parserALM$stack.elementAt(CUP$parserALM$top-11)).value;
+		int e2left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-3)).left;
+		int e2right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-3)).right;
+		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.elementAt(CUP$parserALM$top-3)).value;
+		reg_temporal.setId(e2.toString()); reg_temporal.setNombre(e1.toString()); reg_temporal.setRegistros(reg); reg = new ArrayList<>();
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("parametros_datos",26, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-16)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 62: // bloque_registros ::= bloque_registros COMA parametro_registro 
+          case 62: // bloque_registros ::= parametro_registro bloque_registrosPrima 
             {
               Object RESULT =null;
 
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_registros",30, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-2)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_registros",30, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 63: // bloque_registros ::= parametro_registro 
+          case 63: // bloque_registrosPrima ::= 
             {
               Object RESULT =null;
 
-              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_registros",30, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_registrosPrima",36, ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 64: // parametro_registro ::= COMILLAS NOREGISTRO COMILLAS DOSP COMILLAS tipo_ingreso COMILLAS 
+          case 64: // bloque_registrosPrima ::= COMA bloque_registros 
             {
               Object RESULT =null;
 
+              CUP$parserALM$result = parser.getSymbolFactory().newSymbol("bloque_registrosPrima",36, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
+            }
+          return CUP$parserALM$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 65: // parametro_registro ::= COMILLAS NOREGISTRO COMILLAS DOSP COMILLAS tipo_ingreso COMILLAS 
+            {
+              Object RESULT =null;
+		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)).left;
+		int e1right = ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)).right;
+		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$parserALM$stack.elementAt(CUP$parserALM$top-1)).value;
+		 reg.add(e1.toString());
               CUP$parserALM$result = parser.getSymbolFactory().newSymbol("parametro_registro",27, ((java_cup.runtime.Symbol)CUP$parserALM$stack.elementAt(CUP$parserALM$top-6)), ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()), RESULT);
             }
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 65: // tipo_ingreso ::= ID 
+          case 66: // tipo_ingreso ::= ID 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).left;
@@ -1079,7 +1107,7 @@ class CUP$parserALM$actions {
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 66: // tipo_ingreso ::= USUARIO 
+          case 67: // tipo_ingreso ::= USUARIO 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).left;
@@ -1091,7 +1119,7 @@ class CUP$parserALM$actions {
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 67: // tipo_ingreso ::= TITULO 
+          case 68: // tipo_ingreso ::= TITULO 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).left;
@@ -1103,7 +1131,7 @@ class CUP$parserALM$actions {
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 68: // tipo_ingreso ::= FECHA 
+          case 69: // tipo_ingreso ::= FECHA 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).left;
@@ -1115,7 +1143,7 @@ class CUP$parserALM$actions {
           return CUP$parserALM$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 69: // tipo_ingreso ::= NUMERO 
+          case 70: // tipo_ingreso ::= NUMERO 
             {
               Object RESULT =null;
 		int e1left = ((java_cup.runtime.Symbol)CUP$parserALM$stack.peek()).left;

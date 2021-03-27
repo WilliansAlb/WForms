@@ -19,6 +19,7 @@ public class Formulario {
     private String usuario;
     private String fecha;
     private ArrayList<Componente> componentes;
+    private ArrayList<Registro> registros;
     
     public Formulario() {
         id = "";
@@ -28,9 +29,10 @@ public class Formulario {
         usuario = "";
         fecha = "";
         componentes = new ArrayList<>();
+        registros = new ArrayList<>();
     }
 
-    public Formulario(String id, String titulo, String nombre, String tema, String usuario, String fecha, ArrayList<Componente> componentes) {
+    public Formulario(String id, String titulo, String nombre, String tema, String usuario, String fecha, ArrayList<Componente> componentes, ArrayList<Registro> registros) {
         this.id = id;
         this.titulo = titulo;
         this.nombre = nombre;
@@ -38,6 +40,7 @@ public class Formulario {
         this.usuario = usuario;
         this.fecha = fecha;
         this.componentes = componentes;
+        this.registros = registros;
     }
     
     public String getId() {
@@ -94,6 +97,14 @@ public class Formulario {
 
     public void setComponentes(ArrayList<Componente> componentes) {
         this.componentes = componentes;
+    }
+
+    public ArrayList<Registro> getRegistros() {
+        return registros;
+    }
+
+    public void setRegistros(ArrayList<Registro> registros) {
+        this.registros = registros;
     }
     
     

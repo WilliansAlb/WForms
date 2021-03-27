@@ -9,7 +9,6 @@ and open the template in the editor.
 */
 .contenedor{
     grid-template-columns: 80%;
-    width: 70%;
     justify-content: center;
     border-radius: 20px;
     padding: 20px;
@@ -82,4 +81,16 @@ and open the template in the editor.
 
 .contenedorBLUE{
     background-color: rgb(87, 96, 162);
+}
+
+.paraGrid{
+    display: grid;
+    grid-template-columns: 70%;
+    width: 100%;
+    justify-content: center;
+}
+
+.componente label{
+    font-size: 30px;
+    font-weight: bolder;
 }

@@ -378,3 +378,79 @@ button:focus+.design-container {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+.DARK{
+    background-color: black;
+}
+.WHITE{
+    background-color: white;
+}
+.BLUE{
+    background-color: blue;
+}
+
+#oculto{
+    position: fixed;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background-color: rgba(0, 0, 0, 0.507);
+}
+
+#mensaje{
+    padding: 0;
+    font-size: 40px;
+    background-color: #b6b6b6;
+    width: 40%;
+    height: auto;
+    -webkit-box-shadow: 7px 6px 78px 7px rgb(34, 0, 34);
+    -moz-box-shadow: 7px 6px 78px 7px  rgb(34, 0, 34);
+    box-shadow: 7px 6px 78px 7px  rgb(34, 0, 34);
+    border-radius: 0px 0px 10px 10px;
+}
+#mlink{
+    width: 90%;
+    display: grid;
+    grid-template-columns: 75% 25%;
+}
+#mensaje button:hover,
+#mensaje #mlink button:hover{
+    background-color: black;
+    color: white;
+}
+
+
+#mensaje button,
+#mensaje #mlink button{
+    background-color: white;
+    color: black;
+}
+.popuptext {
+    font-size: 10px;
+    width: 160px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 150;
+    bottom: 90%;
+    /* top: 10%; */
+    left: 50%;
+    margin-left: -80px;
+  }
+  
+  /* Popup arrow */
+  .popuptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+

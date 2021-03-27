@@ -6,7 +6,8 @@
 package Servlet;
 
 import Controladores.ControladorFormulario;
-import POJOS.Formulario;
+import POJOS.Registro;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -19,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author willi
  */
-@WebServlet(name = "Ver", urlPatterns = {"/Ver"})
-public class Ver extends HttpServlet {
+@WebServlet(name = "Ingresar", urlPatterns = {"/Ingresar"})
+public class Ingresar extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,42 +34,16 @@ public class Ver extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter("id");
-        ControladorFormulario control = new ControladorFormulario();
-        Formulario actual = control.obtener(id);
         response.setContentType("text/html;charset=UTF-8");
-        String getHtml = control.html(actual);
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" media=\"screen\" />");
-            out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"style2.css\" media=\"screen\" />");
-            out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"estilos/ver.css\" media=\"screen\" />");
-            out.println("<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\" type=\"text/javascript\"></script>");
-            out.println("<script src=\"js/envio.js\" type=\"text/javascript\"></script>");
-            out.println("<title>Formulario</title>");     
-            out.println("<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"img/forms.svg\" />");
+            out.println("<title>Servlet Ingresar</title>");            
             out.println("</head>");
-            out.println("<body class=\"comp"+actual.getTema().toUpperCase()+"\">");
-            out.println("<div id=\"blurry-filter\"></div>\n" +
-"        <header>\n" +
-"            <div>\n" +
-"                <article id=\"title\"><span class=\"parent\">"+actual.getId()+"</span><br /><span class=\"name\">WF<a style=\"display:contents;text-decoration: none;color:#84d404;\" href=\"/WForms\"><img src=\"img/forms.svg\" style=\"width: 25px;height: 25px;\"></a>RMS</span>\n" +
-"                </article>\n" +
-"                <article id=\"reference\"><div class=\"cerrar\"><a href=\"http://localhost:8080/WForms/Login?logout=si\" style=\"display:contents;text-decoration: none;\"><img src=\"img/salir.svg\" style=\"width: 25px;height: 25px;\"><span style=\"font-size:12px;\">CERRAR SESION</span></a></div></article>\n" +
-"            </div>\n" +
-"        </header>");
-            out.println("<div class=\"paraGrid\">");
-            out.println(getHtml);
-            out.println("</div></div>");
-            out.println("<script>window.onload = function () {\n" +
-"                $(\"#formulario\").bind(\"submit\", function () { "
-                    + "var datos = $('#formulario').serialize();"
-                    + "enviarDatos(datos,\""+actual.getId()+"\");\n" +
-"                    return false;\n" +
-"                });};</script>");
+            out.println("<body>");
+            out.println("<h1>Servlet Ingresar at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -100,7 +75,24 @@ public class Ver extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String seria = request.getParameter("seria");
+        String id = request.getParameter("id");
+        System.out.println(id);
+        if (seria!=null && id!=null){
+            response.setContentType("text/plain");
+            Gson gs = new Gson();
+            Registro[] enums = gs.fromJson(seria, Registro[].class);
+            ControladorFormulario c = new ControladorFormulario();
+            String cs = c.ingresarDatos(enums);
+            if (cs.isEmpty()){
+                response.getWriter().write("ERROR");
+            } else {
+                response.getWriter().write(cs);
+            }
+        } else {
+            response.setContentType("text/plain");
+            response.getWriter().write("ERROR");
+        }
     }
 
     /**

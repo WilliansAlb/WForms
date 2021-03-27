@@ -11,6 +11,7 @@ import Analizadores.parser;
 import Analizadores.parserALM;
 import POJOS.Componente;
 import POJOS.Formulario;
+import POJOS.Registro;
 import POJOS.Solicitud;
 import POJOS.Usuario;
 import java.io.BufferedWriter;
@@ -1351,7 +1352,40 @@ public class ControladorUsuario {
                 } else {
                     out.println("\t\t\"COMPONENTES\":(),");
                 }
-                out.println("\t\t\"DATOS\":()");
+                if (!formsDB.get(i).getRegistros().isEmpty()) {
+                    out.println("\t\t\"DATOS\":(");
+                    ArrayList<Registro> regs = formsDB.get(i).getRegistros();
+                    int conteo = 0;
+                    for (Registro compt : regs) {
+                        String posibles = "";
+                        out.println("\t\t{");
+                        out.println("\t\t\t\"NOMBRE_CAMPO\":\"" + compt.getNombre() + "\",");
+                        out.println("\t\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
+                        if (!compt.getRegistros().isEmpty()) {
+                            for (int j = 0; j < compt.getRegistros().size(); j++) {
+                                posibles += "\t\t\t\"REGISTRO_"+j+"\" : ";
+                                posibles += "\""+compt.getRegistros().get(j)+"\"";
+                                if ((j + 1) != compt.getRegistros().size()) {
+                                    posibles += ",\n";
+                                } else {
+                                    posibles += "\n";
+                                }
+                            }
+                            out.println(posibles);
+                        } else {
+                            out.println(posibles.substring(0, posibles.length() - 2));
+                        }
+                        if ((conteo + 1) == regs.size()) {
+                            out.println("\t\t}");
+                        } else {
+                            out.println("\t\t},");
+                        }
+                        conteo++;
+                    }
+                    out.println("\t\t)");
+                } else {
+                    out.println("\t\t\"DATOS\":()");
+                }
                 if (i + 1 != formsDB.size()) {
                     out.println("\t},");
                 } else {
