@@ -1,8 +1,8 @@
 db.formularios(
 	{
 		"ID_FORM":"$form1",
-		"TITULO":"Formulario para encuesta: 1",
-		"NOMBRE":"formulario_encuesta_1",
+		"TITULO":"Formulario Modificado para encuesta 1",
+		"NOMBRE":"formulario_encuesta_1_v2",
 		"TEMA":"Blue",
 		"USUARIO_CREACION":"ozymandias",
 		"FECHA_CREACION":"2021-03-26",
@@ -19,12 +19,12 @@ db.formularios(
 		{
 			"ID_COMP":"$_grupo_paises",
 			"NOMBRE_CAMPO":"Pais",
-			"CLASE":"COMBO",
+			"CLASE":"CHECKBOX",
 			"TEXTO_VISIBLE":"Pais de Origen:",
 			"INDICE":"1",
-			"ALINEACION":"CENTRO",
+			"ALINEACION":"DERECHA",
 			"REQUERIDO":"SI",
-			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
+			"OPCIONES" : "Guatemala|Costa Rica|Honduras|OTRO"
 		},
 		{
 			"ID_COMP":"$_boton_submit1",
@@ -41,6 +41,16 @@ db.formularios(
 			"ALINEACION":"DERECHA",
 			"REQUERIDO":"NO",
 			"OPCIONES" : "Ibrahim Salem|Camilo Diaz|Camilo Sanchez|Otro"
+		},
+		{
+			"ID_COMP":"$_profesores",
+			"NOMBRE_CAMPO":"Profesores",
+			"CLASE":"COMBO",
+			"TEXTO_VISIBLE":"Profesores excelentes:",
+			"INDICE":"4",
+			"ALINEACION":"CENTRO",
+			"REQUERIDO":"SI",
+			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
 		}
 		),
 		"DATOS":(
@@ -113,6 +123,36 @@ db.formularios(
 		"TEMA":"White",
 		"USUARIO_CREACION":"ozymandias",
 		"FECHA_CREACION":"2021-03-26",
+		"COMPONENTES":(),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$formBurnout",
+		"TITULO":"Preguntas acerca de Burnout 3",
+		"NOMBRE":"formulario_burnout_3",
+		"TEMA":"Dark",
+		"USUARIO_CREACION":"yelbetto",
+		"FECHA_CREACION":"2021-03-27",
+		"COMPONENTES":(),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$formIglesia",
+		"TITULO":"Formulario para encuesta de semana santa",
+		"NOMBRE":"formulario_semana_santa",
+		"TEMA":"White",
+		"USUARIO_CREACION":"monicaAyala",
+		"FECHA_CREACION":"2021-03-27",
+		"COMPONENTES":(),
+		"DATOS":()
+	},
+	{
+		"ID_FORM":"$formularioCanchlas",
+		"TITULO":"Formulario para chanclas 1",
+		"NOMBRE":"formulario_chanclas_1",
+		"TEMA":"White",
+		"USUARIO_CREACION":"ozymandias",
+		"FECHA_CREACION":"2021-03-28",
 		"COMPONENTES":(),
 		"DATOS":()
 	}

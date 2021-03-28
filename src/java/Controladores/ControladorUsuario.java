@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java_cup.runtime.Symbol;
 
 /**
  *
@@ -40,7 +41,7 @@ public class ControladorUsuario {
     private String usuarioActual;
 
     public ControladorUsuario() {
-
+        usuarioActual = "";
     }
 
     public String analizarSolicitudes(String texto, String usuario) throws FileNotFoundException {
@@ -91,8 +92,92 @@ public class ControladorUsuario {
         }
         actualizarUsuarios();
         actualizarFormularios();
-
         retorno += "<!fin_solicitudes>";
+        return retorno;
+    }
+    
+    public String dePrueba(String texto, String usuario) throws FileNotFoundException, IOException {
+        parser par = new parser(new Lexer(new StringReader(texto)));
+        this.usuarioActual = usuario;
+        usuariosDB = listado_usuarios();
+        formsDB = listado_formularios();
+        String retorno = "<!ini_respuestas>\n";
+        retorno += dePrueba2(texto,usuario);
+        try {
+            par.parse();
+            ArrayList<Solicitud> halla = par.lista_solicitudes;
+            if (!halla.isEmpty()){
+                for (int i = 0; i < halla.size(); i++) {
+                    System.out.println("valor del tipo encontrado "+halla.get(i).getTipo());
+                    retorno += "TIPO DE SOLICITUD ENCONTRADA: "+halla.get(i).getTipo();
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Error por: " + ex.toString());
+        }
+        retorno += "<!fin_solicitudes>";
+        return retorno;
+    }
+    
+    public String dePrueba2(String texto, String usuario) throws FileNotFoundException, IOException {
+        Lexer lexico = new Lexer(new StringReader(texto));
+        this.usuarioActual = usuario;
+        usuariosDB = listado_usuarios();
+        formsDB = listado_formularios();
+        String retorno = "<!ini_respuestas>\n";
+        while (true){
+            Symbol simbolito = lexico.next_token();
+            if (simbolito.value==null){
+                break;
+            }
+            System.out.println("valor token:"+simbolito.value);
+        }
+        retorno += "<!fin_solicitudes>";
+        return retorno;
+    }
+    public String analizarSolicitudes(String texto) throws FileNotFoundException {
+        parser par = new parser(new Lexer(new StringReader(texto)));
+        usuariosDB = listado_usuarios();
+        formsDB = listado_formularios();
+        String retorno = "";
+        try {
+            par.parse();
+            ArrayList<Solicitud> halla = par.lista_solicitudes;
+            if (halla.size() > 0) {
+                if (halla.get(0).getTipo().equalsIgnoreCase("LOGIN")) {
+                    System.out.println("entra");
+                    int conteo = 0;
+                    for (int i = 0; i < halla.size(); i++) {
+                        if (halla.get(i).getTipo().equalsIgnoreCase("LOGIN")) {
+                            conteo++;
+                        }
+                    }
+                    if (conteo > 1) {
+                        retorno += "Mandas la solicitud más de un login, solo se permite que hagas una";
+                    } else {
+                        Map<String, String> usuario = halla.get(0).getCuantas().get(0);
+                        boolean existe = false;
+                        for (int i = 0; i < usuariosDB.size(); i++) {
+                            if (usuariosDB.get(i).getUsuario().equals(usuario.get("USUARIO"))
+                                    && usuariosDB.get(i).getPassword().equals(usuario.get("CONTRA"))) {
+                                existe = true;
+                                break;
+                            }
+                        }
+                        if (existe) {
+                            setUsuarioActual(usuario.get("USUARIO"));
+                            retorno += analizarSolicitudes(texto, getUsuarioActual());
+                        } else {
+                            retorno += "Las credenciales que ingresaste no corresponden a ningún usuario";
+                        }
+                    }
+                }
+            } else {
+                retorno += "Sin mandar nada";
+            }
+        } catch (Exception ex) {
+            System.out.println("Error por en metodo analizar: " + ex.toString());
+        }
         return retorno;
     }
 
@@ -1363,8 +1448,8 @@ public class ControladorUsuario {
                         out.println("\t\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
                         if (!compt.getRegistros().isEmpty()) {
                             for (int j = 0; j < compt.getRegistros().size(); j++) {
-                                posibles += "\t\t\t\"REGISTRO_"+j+"\" : ";
-                                posibles += "\""+compt.getRegistros().get(j)+"\"";
+                                posibles += "\t\t\t\"REGISTRO_" + j + "\" : ";
+                                posibles += "\"" + compt.getRegistros().get(j) + "\"";
                                 if ((j + 1) != compt.getRegistros().size()) {
                                     posibles += ",\n";
                                 } else {
@@ -1468,5 +1553,13 @@ public class ControladorUsuario {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         // Aqui usamos la instancia formatter para darle el formato a la fecha. Es importante ver que el resultado es un string.
         return formatter.format(fecha);
+    }
+
+    public String getUsuarioActual() {
+        return usuarioActual;
+    }
+
+    public void setUsuarioActual(String usuarioActual) {
+        this.usuarioActual = usuarioActual;
     }
 }

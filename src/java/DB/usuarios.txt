@@ -47,5 +47,10 @@ db.usuarios(
 		"PASSWORD":"papitoremolino23",
 		"FECHA_CREACION":"2021-03-23",
 		"FECHA_MODIFICACION":"1998-21-07"
+	},
+	{
+		"USUARIO":"profesorBob",
+		"PASSWORD":"12345678",
+		"FECHA_CREACION":"2021-03-28"
 	}
 )

@@ -88,14 +88,26 @@ public class Creacion extends HttpServlet {
         response.setContentType("application/json");
         String parametro = request.getParameter("entrada");
         String parametro2 = request.getParameter("usuario");
-        String correcto = "falso";
         ControladorUsuario control = new ControladorUsuario();
-        String pruebaFunciona = control.analizarSolicitudes(parametro,parametro2);
-        control.listado_formularios();
+        String pruebaFunciona = "";
         Map<String,String> respuestas = new HashMap<>();
-        respuestas.put("usuario", "ozymandias");
-        respuestas.put("conjunto", "probando");
-        respuestas.put("respuesta", pruebaFunciona);
+        if (parametro2!=null){
+            if (!parametro2.isEmpty()){
+                pruebaFunciona = control.analizarSolicitudes(parametro,parametro2);
+                respuestas.put("usuario", parametro2);
+                respuestas.put("respuesta", pruebaFunciona);
+            } else {
+                pruebaFunciona = control.analizarSolicitudes(parametro);
+                if (control.getUsuarioActual().isEmpty()){
+                    respuestas.put("ERROR", pruebaFunciona);
+                } else {
+                    respuestas.put("usuario", control.getUsuarioActual());
+                    respuestas.put("respuesta", pruebaFunciona);
+                }
+            }
+        }
+        //respuestas.put("respuesta",control.dePrueba(parametro, "ozymandias"));
+        //respuestas.put("usuario", "ozymandias");
         String jsonString = new Gson().toJson(respuestas);
         response.getWriter().write(jsonString);
     }
