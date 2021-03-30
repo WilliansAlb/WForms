@@ -10,7 +10,9 @@ import Analizadores.LexerALM;
 import Analizadores.parser;
 import Analizadores.parserALM;
 import POJOS.Componente;
+import POJOS.Consulta;
 import POJOS.Formulario;
+import POJOS.Ingreso;
 import POJOS.Registro;
 import POJOS.Solicitud;
 import POJOS.Usuario;
@@ -28,6 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java_cup.runtime.Symbol;
 
 /**
@@ -36,8 +39,15 @@ import java_cup.runtime.Symbol;
  */
 public class ControladorUsuario {
 
+    public static final int TODOS_LOS_CAMPOS = 0;
+    public static final int AMBOS = 1;
+    public static final int SOLO_CAMPOS = 2;
+    public static final int SOLO_RESTRICCIONES = 3;
     ArrayList<Usuario> usuariosDB;
     ArrayList<Formulario> formsDB;
+    ArrayList<Formulario> datosDB;
+    public String consultades = "";
+    Map<String, ArrayList<String>> mapa = new HashMap<>();
     private String usuarioActual;
 
     public ControladorUsuario() {
@@ -49,6 +59,7 @@ public class ControladorUsuario {
         this.usuarioActual = usuario;
         usuariosDB = listado_usuarios();
         formsDB = listado_formularios();
+        listado_datos();
         String retorno = "<!ini_respuestas>\n";
         try {
             par.parse();
@@ -83,6 +94,9 @@ public class ControladorUsuario {
                     case "MODIFICAR_COMPONENTE":
                         retorno += modificarComponente(temp);
                         break;
+                    case "CONSULTAR_DATOS":
+                        retorno += realizarConsultas(temp);
+                        break;
                     default:
                         break;
                 }
@@ -95,21 +109,619 @@ public class ControladorUsuario {
         retorno += "<!fin_solicitudes>";
         return retorno;
     }
-    
+
+    public String realizarConsultas(Solicitud temp) {
+        String retorno = "   <!ini_respuesta:\"CONSULTAR_DATOS\">\n      {\"CONSULTAS\":[\n";
+        ArrayList<Consulta> cons = temp.getConsulta();
+        for (int i = 0; i < cons.size(); i++) {
+            Consulta analizando = cons.get(i);
+            retorno += "\t{\n";
+            int pos = -1;
+            for (int j = 0; j < datosDB.size(); j++) {
+                if (datosDB.get(j).getId().equals(analizando.getForm()) || datosDB.get(j).getNombre().equals(analizando.getForm())) {
+                    pos = j;
+                    break;
+                }
+            }
+            if (pos != -1) {
+                Formulario tp = new Formulario();
+                for (int j = 0; j < formsDB.size(); j++) {
+                    if (formsDB.get(j).getId().equals(analizando.getForm()) || formsDB.get(j).getNombre().equals(analizando.getForm())) {
+                        tp = formsDB.get(j);
+                        break;
+                    }
+                }
+                if (analizando.getRestricciones().isEmpty() && analizando.getCampos().isEmpty()) {
+
+                    //SI SE PIDEN TODOS LOS DATOS QUE CONTENGA EL FORMULARIO
+                    ArrayList<Componente> co = tp.getComponentes();
+                    ArrayList<String> campos_totales = new ArrayList<>();
+                    for (int j = 0; j < co.size(); j++) {
+                        campos_totales.add(co.get(j).getId());
+                    }
+                    Formulario sp = datosDB.get(pos);
+                    ArrayList<Registro> res = sp.getRegistros();
+                    retorno += respuestaConsulta(res, analizando, co, TODOS_LOS_CAMPOS);
+                } else {
+                    if (analizando.getCampos().isEmpty()) {
+
+                        //SI NO HAY CAMPOS, PERO SI RESTRICCIONES
+                        ArrayList<Componente> co = tp.getComponentes();
+                        int conteo_res = 0;
+                        int conteo_total = 0;
+                        ArrayList<Map<String, String>> soloCondiciones = new ArrayList<>();
+                        ArrayList<String> oplogic = new ArrayList<>();
+                        for (int j = 0; j < analizando.getRestricciones().size(); j++) {
+                            if (!analizando.getRestricciones().get(j).containsKey("OPLOGICO")) {
+                                for (int k = 0; k < co.size(); k++) {
+                                    if (co.get(k).getId().equals(analizando.getRestricciones().get(j).get("CAMPO")) || co.get(k).getNombre_campo().equals(analizando.getRestricciones().get(j).get("CAMPO"))) {
+                                        soloCondiciones.add(analizando.getRestricciones().get(j));
+                                        conteo_res++;
+                                    }
+                                }
+                                conteo_total++;
+                            } else {
+                                oplogic.add(analizando.getRestricciones().get(j).get("OPLOGICO"));
+                            }
+                        }
+                        if (conteo_res != conteo_total) {
+                            retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                            retorno += "         \"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n      }";
+                        } else {
+                            ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
+                            for (int j = 0; j < soloCondiciones.size(); j++) {
+                                conjunto.add(concuerda(pos, analizando.getCampos(), soloCondiciones.get(j), co));
+                            }
+                            while (!oplogic.isEmpty()) {
+                                int an = -1;
+                                for (int j = 0; j < oplogic.size(); j++) {
+                                    if (oplogic.get(j).equals("AND")) {
+                                        an = j;
+                                        break;
+                                    }
+                                }
+                                if (an != -1) {
+                                    ArrayList<Registro> r1 = conjunto.get(an);
+                                    ArrayList<Registro> r2 = conjunto.get(an + 1);
+                                    ArrayList<Registro> ret = new ArrayList<>();
+                                    for (int j = 0; j < r1.size(); j++) {
+                                        for (int k = 0; k < r2.size(); k++) {
+                                            if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
+                                                ret.add(r1.get(j));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    conjunto.set(an, ret);
+                                    conjunto.remove(an + 1);
+                                    oplogic.remove(an);
+                                } else {
+                                    an = -1;
+                                    for (int j = 0; j < oplogic.size(); j++) {
+                                        if (oplogic.get(j).equals("OR")) {
+                                            an = j;
+                                            break;
+                                        }
+                                    }
+                                    if (an != -1) {
+                                        ArrayList<Registro> r1 = conjunto.get(an);
+                                        ArrayList<Registro> r2 = conjunto.get(an + 1);
+                                        ArrayList<Registro> ret = new ArrayList<>();
+                                        ret.addAll(r2);
+                                        for (int j = 0; j < r1.size(); j++) {
+                                            boolean ingresado = false;
+                                            for (int k = 0; k < r2.size(); k++) {
+                                                if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
+                                                    ingresado = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!ingresado) {
+                                                ret.add(r1.get(j));
+                                            }
+                                        }
+                                        conjunto.set(an, ret);
+                                        conjunto.remove(an + 1);
+                                        oplogic.remove(an);
+                                    }
+                                }
+                            }
+                            ArrayList<Registro> enviar = conjunto.get(0);
+                            retorno += respuestaConsulta(enviar, analizando, co, SOLO_RESTRICCIONES);
+                        }
+                    } else {
+                        ArrayList<Componente> co = tp.getComponentes();
+                        int conteo = 0;
+                        for (int j = 0; j < co.size(); j++) {
+                            if (analizando.getCampos().contains(co.get(j).getNombre_campo())) {
+                                conteo++;
+                            }
+                        }
+                        if (conteo == analizando.getCampos().size()) {
+                            if (analizando.getRestricciones().isEmpty()) {
+
+                                //SI SE ENVIAN CAMPOS SIN RESTRICCIONES
+                                Formulario sp = datosDB.get(pos);
+                                ArrayList<Registro> res = sp.getRegistros();
+                                retorno += respuestaConsulta(res, analizando, co, SOLO_CAMPOS);
+                            } else {
+                                int conteo_res = 0;
+                                int conteo_total = 0;
+                                ArrayList<Map<String, String>> soloCondiciones = new ArrayList<>();
+                                ArrayList<String> oplogic = new ArrayList<>();
+                                for (int j = 0; j < analizando.getRestricciones().size(); j++) {
+                                    if (!analizando.getRestricciones().get(j).containsKey("OPLOGICO")) {
+                                        for (int k = 0; k < co.size(); k++) {
+                                            if (co.get(k).getId().equals(analizando.getRestricciones().get(j).get("CAMPO")) || co.get(k).getNombre_campo().equals(analizando.getRestricciones().get(j).get("CAMPO"))) {
+                                                soloCondiciones.add(analizando.getRestricciones().get(j));
+                                                conteo_res++;
+                                            }
+                                        }
+                                        conteo_total++;
+                                    } else {
+                                        oplogic.add(analizando.getRestricciones().get(j).get("OPLOGICO"));
+                                    }
+                                }
+                                if (conteo_res != conteo_total) {
+                                    retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                                    retorno += "         \"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n      }";
+                                } else {
+                                    ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
+                                    for (int j = 0; j < soloCondiciones.size(); j++) {
+                                        conjunto.add(concuerda(pos, analizando.getCampos(), soloCondiciones.get(j), co));
+                                    }
+                                    while (!oplogic.isEmpty()) {
+                                        int an = -1;
+                                        for (int j = 0; j < oplogic.size(); j++) {
+                                            if (oplogic.get(j).equals("AND")) {
+                                                an = j;
+                                                break;
+                                            }
+                                        }
+                                        if (an != -1) {
+                                            ArrayList<Registro> r1 = conjunto.get(an);
+                                            ArrayList<Registro> r2 = conjunto.get(an + 1);
+                                            ArrayList<Registro> ret = new ArrayList<>();
+                                            for (int j = 0; j < r1.size(); j++) {
+                                                for (int k = 0; k < r2.size(); k++) {
+                                                    if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
+                                                        ret.add(r1.get(j));
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            conjunto.set(an, ret);
+                                            conjunto.remove(an + 1);
+                                            oplogic.remove(an);
+                                        } else {
+                                            an = -1;
+                                            for (int j = 0; j < oplogic.size(); j++) {
+                                                if (oplogic.get(j).equals("OR")) {
+                                                    an = j;
+                                                    break;
+                                                }
+                                            }
+                                            if (an != -1) {
+                                                ArrayList<Registro> r1 = conjunto.get(an);
+                                                ArrayList<Registro> r2 = conjunto.get(an + 1);
+                                                ArrayList<Registro> ret = new ArrayList<>();
+                                                ret.addAll(r2);
+                                                for (int j = 0; j < r1.size(); j++) {
+                                                    boolean ingresado = false;
+                                                    for (int k = 0; k < r2.size(); k++) {
+                                                        if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
+                                                            ingresado = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (!ingresado) {
+                                                        ret.add(r1.get(j));
+                                                    }
+                                                }
+                                                conjunto.set(an, ret);
+                                                conjunto.remove(an + 1);
+                                                oplogic.remove(an);
+                                            }
+                                        }
+                                    }
+                                    ArrayList<Registro> enviar = conjunto.get(0);
+                                    retorno += respuestaConsulta(enviar, analizando, co, AMBOS);
+                                }
+                            }
+                        } else {
+                            retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                            retorno += "         \"DESCRIPCION\":\"UNO O VARIOS CAMPOS QUE SOLICITASTE NO FORMAN PARTE DE LOS COMPONENTES DEL FORMULARIO\"\n      }";
+                        }
+                    }
+                }
+
+            } else {
+                retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                retorno += "         \"DESCRIPCION\":\"EL FORMULARIO AUN NO TIENE DATOS INGRESADOS, POR LO QUE TU CONSULTA NO DEVUELVE NADA\"\n      }";
+            }
+            if ((i + 1) != cons.size()) {
+                retorno += "\t},\n";
+            } else {
+                retorno += "\t}\n";
+            }
+        }
+        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        return retorno;
+    }
+
+    /**
+     *
+     * @param res ArrayList con los registros encontrados y que se le mostraran
+     * al usuario
+     * @param analizando Consulta para agarrar los datos correspondientes y
+     * volver a escribir la consulta
+     * @param co ArrayList de los componentes para el orden de los mismos
+     * @param opcion TODOS_LOS_CAMPOS si no se mandan ni campos ni restricciones
+     * AMBOS si se mandan restricciones y campos SOLO_CAMPOS solo los campos y
+     * SOLO_RESTRICCIONES SI SOLO SE MANDAN RESTRICCIONES
+     * @return
+     */
+    public String respuestaConsulta(ArrayList<Registro> res, Consulta analizando, ArrayList<Componente> co, int opcion) {
+        String retorno = "";
+        String t3 = "\t\t";
+        retorno += t3 + "\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
+        consultades += analizando.getNoconsulta() + "\n";
+        switch (opcion) {
+            case TODOS_LOS_CAMPOS:
+                retorno += t3 + "\"CONSULTA\" : \"SELECT TO FORM -> " + analizando.getForm() + "[]\",\n";
+                consultades += "SELECT TO FORM -> " + analizando.getForm() + "[]\n";
+                break;
+            case AMBOS:
+                retorno += t3 + "\"CONSULTA\" : \"SELECT TO FORM -> " + analizando.getForm() + " [";
+                consultades += "SELECT TO FORM -> " + analizando.getForm() + "[";
+                for (int i = 0; i < analizando.getCampos().size(); i++) {
+                    retorno += analizando.getCampos().get(i);
+                    consultades += analizando.getCampos().get(i);
+                    if ((i + 1) != analizando.getCampos().size()) {
+                        retorno += ",";
+                        consultades += ",";
+                    }
+                }
+                retorno += "] ";
+                retorno += "WHERE [ ";
+                consultades += "] WHERE [";
+                for (int i = 0; i < analizando.getRestricciones().size(); i++) {
+                    Map<String, String> mp = analizando.getRestricciones().get(i);
+                    if (mp.containsKey("OPLOGICO")) {
+                        retorno += mp.get("OPLOGICO") + " ";
+                        consultades += mp.get("OPLOGICO") + " ";
+                    } else {
+                        if (mp.containsKey("NOT")) {
+                            retorno += "NOT ";
+                            consultades += "NOT ";
+                        }
+                        retorno += mp.get("CAMPO") + " " + mp.get("OPRELACIONAL") + " ";
+                        consultades += mp.get("CAMPO") + " " + mp.get("OPRELACIONAL") + " ";
+                        if (mp.get("TIPO").equals("NUMERO") || mp.get("TIPO").equals("DECIMAL")) {
+                            retorno += " " + mp.get("DATO") + " ";
+                            consultades += " " + mp.get("DATO") + " ";
+                        } else {
+                            retorno += " '" + mp.get("DATO") + "' ";
+                            consultades += " '" + mp.get("DATO") + "' ";
+                        }
+                    }
+                }
+                retorno += " ]\",\n";
+                consultades += " ]\n";
+                break;
+            case SOLO_CAMPOS:
+                retorno += t3 + "\"CONSULTA\" : \"SELECT TO FORM -> " + analizando.getForm() + " [";
+                consultades += "SELECT TO FORM -> " + analizando.getForm() + "[";
+                for (int i = 0; i < analizando.getCampos().size(); i++) {
+                    retorno += analizando.getCampos().get(i);
+                    consultades += analizando.getCampos().get(i);
+                    if ((i + 1) != analizando.getCampos().size()) {
+                        retorno += ",";
+                        consultades += ",";
+                    }
+                }
+                retorno += "]\",\n";
+                consultades += " ]\n";
+                break;
+            case SOLO_RESTRICCIONES:
+                retorno += t3 + "\"CONSULTA\" : \"SELECT TO FORM -> " + analizando.getForm() + " [] ";
+                consultades += "SELECT TO FORM -> " + analizando.getForm() + "[] WHERE [ ";
+                retorno += "WHERE [ ";
+                for (int i = 0; i < analizando.getRestricciones().size(); i++) {
+                    Map<String, String> mp = analizando.getRestricciones().get(i);
+                    if (mp.containsKey("OPLOGICO")) {
+                        retorno += mp.get("OPLOGICO") + " ";
+                        consultades += mp.get("OPLOGICO") + " ";
+                    } else {
+                        if (mp.containsKey("NOT")) {
+                            retorno += "NOT ";
+                            consultades += "NOT ";
+                        }
+                        retorno += mp.get("CAMPO") + " " + mp.get("OPRELACIONAL") + " ";
+                        consultades += mp.get("CAMPO") + " " + mp.get("OPRELACIONAL") + " ";
+                        if (mp.get("TIPO").equals("NUMERO") || mp.get("TIPO").equals("DECIMAL")) {
+                            retorno += " " + mp.get("DATO") + " ";
+                            consultades += " " + mp.get("DATO") + " ";
+                        } else {
+                            retorno += " '" + mp.get("DATO") + "' ";
+                            consultades += " '" + mp.get("DATO") + "' ";
+                        }
+                    }
+                }
+                retorno += " ]\",\n";
+                consultades += " ]\n";
+                break;
+            default:
+                break;
+        }
+        if (!res.isEmpty()) {
+            ArrayList<String> camposec = new ArrayList<>();
+            ArrayList<String> datosec = new ArrayList<>();
+            retorno += t3 + "\"RESULTADOS\":[\n";
+            for (int j = 0; j < res.size(); j++) {
+                Registro tep = res.get(j);
+                if (opcion == TODOS_LOS_CAMPOS) {
+                    tep = extraerTodosCampos(tep, co);
+                } else if (opcion == SOLO_CAMPOS) {
+                    tep = extraerCampos(analizando.getCampos(), tep, co);
+                }
+                if (j == 0) {
+                    camposec.add("ID_REGISTRO");
+                    for (int k = 0; k < tep.getValores().size(); k++) {
+                        camposec.add(tep.getValores().get(k).getNombrec());
+                    }
+                }
+                retorno += t3 + "{\n" + t3 + "\t\"REGISTRO\":\"" + tep.getNoregistro() + "\",\n";
+                datosec.add(tep.getNoregistro());
+                for (int k = 0; k < tep.getValores().size(); k++) {
+                    retorno += t3 + "\t\"" + tep.getValores().get(k).getNombrec() + "\":\"" + tep.getValores().get(k).getDato() + "\"";
+                    if (!tep.getValores().get(k).getDato().isEmpty()){
+                        datosec.add(tep.getValores().get(k).getDato());
+                    } else {
+                        datosec.add(" ");
+                    }
+                    if ((k + 1) != tep.getValores().size()) {
+                        retorno += ",\n";
+                    } else {
+                        retorno += "\n";
+                    }
+                }
+                retorno += t3 + "}";
+                if ((j + 1) != res.size()) {
+                    retorno += ",\n";
+                }
+            }
+            for (String s:camposec){
+                consultades += s+" <///>";
+            }
+            consultades += "\n";
+            for (String s:datosec){
+                consultades += s+" <///>";
+            }
+            consultades += "\t";
+            retorno += "\n" + t3 + "]\n";
+        } else {
+            consultades += "NO HAY NINGUN REGISTRO\nQUE COINCIDA CON LO SOLICITADO\t";
+            retorno += t3 + "\"RESULTADOS\":\"NO SE HALLARON RESULTADOS\"\n";
+        }
+        return retorno;
+    }
+
+    public ArrayList<Registro> concuerda(int form, ArrayList<String> campos, Map<String, String> restricciones, ArrayList<Componente> co) {
+        ArrayList<Registro> retorno = new ArrayList<>();
+        Formulario actual = datosDB.get(form);
+        ArrayList<Registro> ingresados = actual.getRegistros();
+        boolean traeCampos = !campos.isEmpty();
+        String campo = restricciones.get("CAMPO");
+        String opre = restricciones.get("OPRELACIONAL");
+        if (restricciones.containsKey("NOT")) {
+            switch (opre) {
+                case "=":
+                    opre = "!=";
+                    break;
+                case "<":
+                    opre = ">=";
+                    break;
+                case ">":
+                    opre = "<=";
+                    break;
+                case "<=":
+                    opre = ">";
+                    break;
+                case ">=":
+                    opre = "<";
+                    break;
+                case "!=":
+                    opre = "=";
+                    break;
+                default:
+                    break;
+            }
+        }
+        String tipo = restricciones.get("TIPO");
+        String dato = restricciones.get("DATO");
+
+        if (tipo.equals("NUMERO") || tipo.equals("DECIMAL")) {
+            Double datoC = Double.parseDouble(dato);
+            for (int i = 0; i < ingresados.size(); i++) {
+                Registro tp = ingresados.get(i);
+                ArrayList<Ingreso> in = tp.getValores();
+                for (int j = 0; j < in.size(); j++) {
+                    Ingreso it = in.get(j);
+                    if (it.getIdc().equals(campo) || it.getNombrec().equals(campo)) {
+                        if (verificarNumero(it.getDato())) {
+                            Double ingreso = Double.parseDouble(it.getDato());
+                            boolean corresponde = false;
+                            switch (opre) {
+                                case "=":
+                                    if (Objects.equals(ingreso, datoC)) {
+                                        corresponde = true;
+                                    }
+                                    break;
+                                case "<":
+                                    if (ingreso < datoC) {
+                                        corresponde = true;
+                                    }
+                                    break;
+                                case ">":
+                                    if (ingreso > datoC) {
+                                        corresponde = true;
+                                    }
+                                    break;
+                                case "<=":
+                                    if (ingreso <= datoC) {
+                                        corresponde = true;
+                                    }
+                                    break;
+                                case ">=":
+                                    if (ingreso >= datoC) {
+                                        corresponde = true;
+                                    }
+                                    break;
+                                case "!=":
+                                    if (ingreso > datoC || ingreso < datoC) {
+                                        corresponde = true;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (corresponde) {
+                                if (traeCampos) {
+                                    retorno.add(extraerCampos(campos, tp, co));
+                                } else {
+                                    retorno.add(extraerTodosCampos(tp, co));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < ingresados.size(); i++) {
+                Registro tp = ingresados.get(i);
+                ArrayList<Ingreso> in = tp.getValores();
+                for (int j = 0; j < in.size(); j++) {
+                    Ingreso it = in.get(j);
+                    if (it.getIdc().equals(campo) || it.getNombrec().equals(campo)) {
+                        boolean corresponde = false;
+                        switch (opre) {
+                            case "=":
+                                if (it.getDato().equals(dato)) {
+                                    corresponde = true;
+                                }
+                                break;
+                            case "!=":
+                                if (!it.getDato().equals(dato)) {
+                                    corresponde = true;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        if (corresponde) {
+                            if (traeCampos) {
+                                retorno.add(extraerCampos(campos, tp, co));
+                            } else {
+                                retorno.add(extraerTodosCampos(tp, co));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return retorno;
+    }
+
+    public Registro extraerTodosCampos(Registro tp, ArrayList<Componente> co) {
+        Registro retorno = new Registro();
+        retorno.setNoregistro(tp.getNoregistro());
+
+        for (int i = 0; i < co.size(); i++) {
+            Componente c = co.get(i);
+            boolean encontrado = false;
+            for (int k = 0; k < tp.getValores().size(); k++) {
+                Ingreso in = tp.getValores().get(k);
+                if (in.getIdc().equals(c.getId()) || in.getNombrec().equals(c.getNombre_campo())) {
+                    retorno.getValores().add(in);
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (!c.getClase().equals("BOTON") && !c.getClase().equals("IMAGEN") && !c.getClase().equals("FICHERO")) {
+                if (!encontrado) {
+                    Ingreso it = new Ingreso();
+                    it.setIdc(c.getId());
+                    it.setNombrec(c.getNombre_campo());
+                    retorno.getValores().add(it);
+                }
+            }
+        }
+        return retorno;
+    }
+
+    /**
+     *
+     * @param campos Los campos que solicita el usuario
+     * @param tp El registro de donde pide los datos
+     * @param co El conjunto de componentes, para retornar un conjunto bien
+     * ordenado
+     * @return El registro ordenado
+     */
+    public Registro extraerCampos(ArrayList<String> campos, Registro tp, ArrayList<Componente> co) {
+        Registro retorno = new Registro();
+        retorno.setNoregistro(tp.getNoregistro());
+
+        for (int i = 0; i < co.size(); i++) {
+            for (int j = 0; j < campos.size(); j++) {
+                if (co.get(i).getId().equals(campos.get(j)) || co.get(i).getNombre_campo().equals(campos.get(j))) {
+                    String actual = campos.get(j);
+                    boolean encontrado = false;
+                    for (int k = 0; k < tp.getValores().size(); k++) {
+                        Ingreso in = tp.getValores().get(k);
+                        if (in.getIdc().equals(actual) || in.getNombrec().equals(actual)) {
+                            retorno.getValores().add(in);
+                            encontrado = true;
+                        }
+                    }
+                    if (!encontrado) {
+                        Ingreso it = new Ingreso();
+                        it.setIdc(co.get(i).getId());
+                        it.setNombrec(co.get(i).getNombre_campo());
+                        retorno.getValores().add(it);
+                    }
+                }
+            }
+        }
+        return retorno;
+    }
+
+    public boolean verificarNumero(String dato) {
+        return dato.matches("[+-]?\\d*(\\.\\d+)?");
+    }
+
     public String dePrueba(String texto, String usuario) throws FileNotFoundException, IOException {
         parser par = new parser(new Lexer(new StringReader(texto)));
         this.usuarioActual = usuario;
         usuariosDB = listado_usuarios();
         formsDB = listado_formularios();
         String retorno = "<!ini_respuestas>\n";
-        retorno += dePrueba2(texto,usuario);
+        retorno += dePrueba2(texto, usuario);
         try {
             par.parse();
             ArrayList<Solicitud> halla = par.lista_solicitudes;
-            if (!halla.isEmpty()){
-                for (int i = 0; i < halla.size(); i++) {
-                    System.out.println("valor del tipo encontrado "+halla.get(i).getTipo());
-                    retorno += "TIPO DE SOLICITUD ENCONTRADA: "+halla.get(i).getTipo();
+            ArrayList<Consulta> halla2 = par.lista_consultas;
+            if (!halla2.isEmpty()) {
+                for (int i = 0; i < halla2.size(); i++) {
+                    Consulta c = halla2.get(i);
+                    System.out.println("Consulta numero: " + halla2.get(i).getNoconsulta() + " del Formulario: " + halla2.get(i).getForm() + " sacara " + halla2.get(i).getCampos().size());
+                    for (int j = 0; j < c.getPuentes().size(); j++) {
+                        System.out.println("Puente " + j + ": " + c.getPuentes().get(j));
+                    }
+                    for (int j = 0; j < c.getRestricciones().size(); j++) {
+                        System.out.println("Restricciones " + j + ": " + c.getRestricciones().get(j));
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -118,23 +730,24 @@ public class ControladorUsuario {
         retorno += "<!fin_solicitudes>";
         return retorno;
     }
-    
+
     public String dePrueba2(String texto, String usuario) throws FileNotFoundException, IOException {
         Lexer lexico = new Lexer(new StringReader(texto));
         this.usuarioActual = usuario;
         usuariosDB = listado_usuarios();
         formsDB = listado_formularios();
         String retorno = "<!ini_respuestas>\n";
-        while (true){
+        while (true) {
             Symbol simbolito = lexico.next_token();
-            if (simbolito.value==null){
+            if (simbolito.value == null) {
                 break;
             }
-            System.out.println("valor token:"+simbolito.value);
+            System.out.println("valor token:" + simbolito.value);
         }
         retorno += "<!fin_solicitudes>";
         return retorno;
     }
+
     public String analizarSolicitudes(String texto) throws FileNotFoundException {
         parser par = new parser(new Lexer(new StringReader(texto)));
         usuariosDB = listado_usuarios();
@@ -207,6 +820,18 @@ public class ControladorUsuario {
             System.out.println("Error por: " + ex.toString());
         }
         return halla;
+    }
+
+    public void listado_datos() throws FileNotFoundException {
+        String rutaArchivos = "C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/datos.txt";
+        File nuevo = new File(rutaArchivos);
+        parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
+        try {
+            par.parse();
+            datosDB = par.listado_datos;
+        } catch (Exception ex) {
+            System.out.println("Error por: " + ex.toString());
+        }
     }
 
     public String crearUsuario(Solicitud crearU) {
@@ -739,18 +1364,14 @@ public class ControladorUsuario {
         switch (mapeado.getClase()) {
             case "BOTON":
                 formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                if (mapeado.getIndice() != -1) {
-                    cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                }
+                retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                 retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 break;
             case "IMAGEN":
                 if (!mapeado.getUrl().isEmpty()) {
                     nuevo.setUrl(mapeado.getUrl());
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -767,9 +1388,7 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.getRequerido());
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -790,9 +1409,7 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.getRequerido());
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -811,9 +1428,7 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.getRequerido());
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -832,9 +1447,7 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.getRequerido());
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -853,9 +1466,7 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.getRequerido());
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -872,9 +1483,7 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.getRequerido());
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
-                    if (mapeado.getIndice() != -1) {
-                        cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    }
+                    retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
                     retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
                 } else {
                     retorno += "         \"ESTADO\":\"ERROR\",\n";
@@ -890,26 +1499,51 @@ public class ControladorUsuario {
     public String cambiarIndice(int pos, int pos_comp, int indice) {
         ArrayList<Componente> temporal = new ArrayList<>();
         String retorno = "";
-        if (indice < formsDB.get(pos).getComponentes().size()) {
-            if (indice != pos_comp) {
-                int conteo = 0;
-                for (int i = 0; i < (formsDB.get(pos).getComponentes().size() + 1); i++) {
-                    if (indice == i) {
-                        temporal.add(formsDB.get(pos).getComponentes().get(pos_comp));
-                    } else {
-                        if (conteo != pos_comp) {
-                            temporal.add(formsDB.get(pos).getComponentes().get(conteo));
+        if (indice != -1) {
+            if (indice > 0) {
+                if (indice <= formsDB.get(pos).getComponentes().size()) {
+                    indice = indice - 1;
+                    if (indice != pos_comp) {
+                        if (indice > pos_comp) {
+                            ArrayList<Componente> temporal_antes = new ArrayList<>();
+                            ArrayList<Componente> temporal_despues = new ArrayList<>();
+                            for (int i = 0; i < pos_comp; i++) {
+                                temporal_antes.add(formsDB.get(pos).getComponentes().get(i));
+                            }
+                            for (int i = (indice + 1); i < formsDB.get(pos).getComponentes().size(); i++) {
+                                temporal_despues.add(formsDB.get(pos).getComponentes().get(i));
+                            }
+                            for (int i = (pos_comp + 1); i < (indice + 1); i++) {
+                                temporal_antes.add(formsDB.get(pos).getComponentes().get(i));
+                            }
+                            temporal_antes.add(formsDB.get(pos).getComponentes().get(pos_comp));
+                            temporal_antes.addAll(temporal_despues);
+                            formsDB.get(pos).setComponentes(temporal_antes);
+                        } else {
+                            int conteo = 0;
+                            for (int i = 0; i < (formsDB.get(pos).getComponentes().size() + 1); i++) {
+                                if (indice == i) {
+                                    temporal.add(formsDB.get(pos).getComponentes().get(pos_comp));
+                                } else {
+                                    if (conteo != pos_comp) {
+                                        temporal.add(formsDB.get(pos).getComponentes().get(conteo));
+                                    }
+                                    conteo++;
+                                }
+                            }
+                            formsDB.get(pos).setComponentes(temporal);
                         }
-                        conteo++;
+                        retorno += "         \"NOTA\":\"Fue cambiado el indice del componente de " + pos_comp + " a " + indice + "\",\n";
+                    } else {
+                        retorno += "         \"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
                     }
+                } else {
+                    retorno += "         \"NOTA\":\"El indice al que intentas mover el componente no existe\",\n";
                 }
-                formsDB.get(pos).setComponentes(temporal);
-                retorno += "         \"NOTA\":\"Fue cambiado el indice del componente de " + pos_comp + " a " + indice + "\",\n";
             } else {
-                retorno += "         \"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
+                retorno += "         \"ESTADO\":\"ERROR\",\n";
+                retorno += "         \"DESCRIPCION_ERROR\":\"El indice debe ser mayor que 0\"\n      }";
             }
-        } else {
-            retorno += "         \"NOTA\":\"El indice al que intentas mover el componente no existe\",\n";
         }
         return retorno;
     }
@@ -1399,7 +2033,7 @@ public class ControladorUsuario {
                         }
                         out.println("\t\t\t\"CLASE\":\"" + compt.getClase() + "\",");
                         out.println("\t\t\t\"TEXTO_VISIBLE\":\"" + compt.getTexto_visible() + "\",");
-                        posibles += "\t\t\t\"INDICE\":\"" + (conteo) + "\",\n";
+                        posibles += "\t\t\t\"INDICE\":\"" + (conteo + 1) + "\",\n";
                         if (!compt.getAlineacion().isEmpty()) {
                             posibles += "\t\t\t\"ALINEACION\":\"" + compt.getAlineacion() + "\",\n";
                         }
@@ -1433,43 +2067,9 @@ public class ControladorUsuario {
                         }
                         conteo++;
                     }
-                    out.println("\t\t),");
-                } else {
-                    out.println("\t\t\"COMPONENTES\":(),");
-                }
-                if (!formsDB.get(i).getRegistros().isEmpty()) {
-                    out.println("\t\t\"DATOS\":(");
-                    ArrayList<Registro> regs = formsDB.get(i).getRegistros();
-                    int conteo = 0;
-                    for (Registro compt : regs) {
-                        String posibles = "";
-                        out.println("\t\t{");
-                        out.println("\t\t\t\"NOMBRE_CAMPO\":\"" + compt.getNombre() + "\",");
-                        out.println("\t\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
-                        if (!compt.getRegistros().isEmpty()) {
-                            for (int j = 0; j < compt.getRegistros().size(); j++) {
-                                posibles += "\t\t\t\"REGISTRO_" + j + "\" : ";
-                                posibles += "\"" + compt.getRegistros().get(j) + "\"";
-                                if ((j + 1) != compt.getRegistros().size()) {
-                                    posibles += ",\n";
-                                } else {
-                                    posibles += "\n";
-                                }
-                            }
-                            out.println(posibles);
-                        } else {
-                            out.println(posibles.substring(0, posibles.length() - 2));
-                        }
-                        if ((conteo + 1) == regs.size()) {
-                            out.println("\t\t}");
-                        } else {
-                            out.println("\t\t},");
-                        }
-                        conteo++;
-                    }
                     out.println("\t\t)");
                 } else {
-                    out.println("\t\t\"DATOS\":()");
+                    out.println("\t\t\"COMPONENTES\":()");
                 }
                 if (i + 1 != formsDB.size()) {
                     out.println("\t},");

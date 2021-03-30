@@ -12,38 +12,40 @@ import java.util.ArrayList;
  * @author willi
  */
 public class Registro {
+    private String noregistro;
+    private ArrayList<Ingreso> valores;
     private String id;
     private String nombre;
     private String form;
+    private String nombref;
     private String registro;
-    private ArrayList<String> registros;
-
-    public Registro(String id, String nombre, String form, String registro, ArrayList<String> registros) {
-        this.id = id;
-        this.nombre = nombre;
-        this.form = form;
-        this.registro = registro;
-        this.registros = registros;
-    }
-    
-    
-
-    public ArrayList<String> getRegistros() {
-        return registros;
-    }
-
-    public void setRegistros(ArrayList<String> registros) {
-        this.registros = registros;
-    }
-
-    
 
     public Registro() {
-        id = "";
-        nombre = "";
-        form = "";
-        registro = "";
-        registros = new ArrayList<>();
+        noregistro = "";
+        valores = new ArrayList<>();
+    }
+
+    public Registro(String noregistro, ArrayList<Ingreso> valores) {
+        this.noregistro = noregistro;
+        this.valores = valores;
+    }
+    
+    
+    
+    public String getNoregistro() {
+        return noregistro;
+    }
+
+    public void setNoregistro(String noregistro) {
+        this.noregistro = noregistro;
+    }
+
+    public ArrayList<Ingreso> getValores() {
+        return valores;
+    }
+
+    public void setValores(ArrayList<Ingreso> valores) {
+        this.valores = valores;
     }
 
     public String getId() {
@@ -70,6 +72,14 @@ public class Registro {
         this.form = form;
     }
 
+    public String getNombref() {
+        return nombref;
+    }
+
+    public void setNombref(String nombref) {
+        this.nombref = nombref;
+    }
+
     public String getRegistro() {
         return registro;
     }
@@ -77,5 +87,5 @@ public class Registro {
     public void setRegistro(String registro) {
         this.registro = registro;
     }
-    
+
 }

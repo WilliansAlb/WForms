@@ -66,9 +66,21 @@ public class Ver extends HttpServlet {
             out.println("<script>window.onload = function () {\n" +
 "                $(\"#formulario\").bind(\"submit\", function () { "
                     + "var datos = $('#formulario').serialize();"
-                    + "enviarDatos(datos,\""+actual.getId()+"\");\n" +
+                    + "enviarDatos(datos,\""+actual.getId()+"\",\""+actual.getNombre()+"\");\n" +
 "                    return false;\n" +
 "                });};</script>");
+            out.println("<div id=\"oculto\" style=\"display:none;\">\n" +
+"            <center>\n" +
+"\n" +
+"                <div id=\"mensaje\">\n" +
+"                    <label for=\"link\">El link es: </label>\n" +
+"                    <div id=\"mlink\">\n" +
+"                        <input id=\"link\" type=\"text\" disabled style=\"text-align:center;\"><span class=\"popuptext\" id=\"spam\" style=\"display:none;\">Link copiado al portapapeles!</span><button onclick=\"copiar();\">COPIAR&#x029C9;</button>\n" +
+"                    </div>\n" +
+"                    <button onclick=\"ocultar(document.getElementById('oculto'));\">CERRAR&#x02A2F;</button>\n" +
+"                </div>\n" +
+"            </center>\n" +
+"        </div>");
             out.println("</body>");
             out.println("</html>");
         }

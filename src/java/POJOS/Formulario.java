@@ -106,6 +106,4 @@ public class Formulario {
     public void setRegistros(ArrayList<Registro> registros) {
         this.registros = registros;
     }
-    
-    
 }

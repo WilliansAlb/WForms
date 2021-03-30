@@ -84,7 +84,6 @@ public class Creacion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         response.setContentType("application/json");
         String parametro = request.getParameter("entrada");
         String parametro2 = request.getParameter("usuario");
@@ -96,6 +95,7 @@ public class Creacion extends HttpServlet {
                 pruebaFunciona = control.analizarSolicitudes(parametro,parametro2);
                 respuestas.put("usuario", parametro2);
                 respuestas.put("respuesta", pruebaFunciona);
+                respuestas.put("reportes", control.consultades);
             } else {
                 pruebaFunciona = control.analizarSolicitudes(parametro);
                 if (control.getUsuarioActual().isEmpty()){
@@ -107,7 +107,9 @@ public class Creacion extends HttpServlet {
             }
         }
         //respuestas.put("respuesta",control.dePrueba(parametro, "ozymandias"));
-        //respuestas.put("usuario", "ozymandias");
+        //control.listado_datos();
+        //respuestas.put("respuesta","culo");
+        respuestas.put("usuario", "ozymandias");
         String jsonString = new Gson().toJson(respuestas);
         response.getWriter().write(jsonString);
     }

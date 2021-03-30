@@ -77,18 +77,14 @@ public class Ingresar extends HttpServlet {
             throws ServletException, IOException {
         String seria = request.getParameter("seria");
         String id = request.getParameter("id");
-        System.out.println(id);
+        String nombre = request.getParameter("nombre");
         if (seria!=null && id!=null){
             response.setContentType("text/plain");
             Gson gs = new Gson();
             Registro[] enums = gs.fromJson(seria, Registro[].class);
             ControladorFormulario c = new ControladorFormulario();
-            String cs = c.ingresarDatos(enums);
-            if (cs.isEmpty()){
-                response.getWriter().write("ERROR");
-            } else {
-                response.getWriter().write(cs);
-            }
+            String re = c.ingresarDatos(enums, id, nombre);
+            response.getWriter().write(re);
         } else {
             response.setContentType("text/plain");
             response.getWriter().write("ERROR");

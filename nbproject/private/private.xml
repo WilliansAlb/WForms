@@ -3,11 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/Servlet/Ver.java</file>
-            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/web/js/envio.js</file>
-            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/web/forms.jsp</file>
-            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/formularios.txt</file>
-            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/POJOS/Formulario.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/Controladores/ControladorUsuario.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/POJOS/Ingreso.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/POJOS/Solicitud.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/datos.txt</file>
+            <file>file:/C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/Servlet/Creacion.java</file>
         </group>
     </open-files>
 </project-private>

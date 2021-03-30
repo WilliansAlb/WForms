@@ -1,46 +1,84 @@
- "CREAR_USUARIO"     {return new Symbol(sym.CREARU,yycolumn,yyline,yytext());}
- "USUARIO"           {return new Symbol(sym.USUARIOP,yycolumn,yyline,yytext());}
- "PASSWORD"          {return new Symbol(sym.CONTRAP,yycolumn,yyline,yytext());}
- "FECHA_CREACION"    {return new Symbol(sym.FECHACP,yycolumn,yyline,yytext());}
- "MODIFICAR_USUARIO" {return new Symbol(sym.MODIFICARU,yycolumn,yyline,yytext());}
- "USUARIO_ANTIGUO"   {return new Symbol(sym.USUARIOAP,yycolumn,yyline,yytext());}
- "USUARIO_NUEVO"     {return new Symbol(sym.USUARIONP,yycolumn,yyline,yytext());}
- "NUEVO_PASSWORD"    {return new Symbol(sym.NUEVOP,yycolumn,yyline,yytext());}
- "FECHA_MODIFICACION" {return new Symbol(sym.FECHAMP,yycolumn,yyline,yytext());}
- "ELIMINAR_USUARIO"  {return new Symbol(sym.ELIMINARU,yycolumn,yyline,yytext());}
- "LOGIN_USUARIO"     {return new Symbol(sym.LOGINU,yycolumn,yyline,yytext());}
- "NUEVO_FORMULARIO"  {return new Symbol(sym.NUEVOFP,yycolumn,yyline,yytext());}
- "ID"                {return new Symbol(sym.IDP,yycolumn,yyline,yytext());}
- "TITULO"            {return new Symbol(sym.TITULOP,yycolumn,yyline,yytext());}
- "NOMBRE"            {return new Symbol(sym.NOMBREP,yycolumn,yyline,yytext());}
- "TEMA"              {return new Symbol(sym.TEMAP,yycolumn,yyline,yytext());}
- "USUARIO_CREACION"  {return new Symbol(sym.USUARIOCP,yycolumn,yyline,yytext());}
- ({DARK}|{WHITE}|{BLUE})   {return new Symbol(sym.TEMA,yycolumn,yyline,yytext());}
- ("CENTRO"|"IZQUIERDA"|"DERECHA"|"JUSTIFICAR")                       {return new Symbol(sym.ALINEA,yycolumn,yyline,yytext());}
- ("CAMPO_TEXTO"|"FICHERO")                                           {return new Symbol(sym.CLASENORMAL,yycolumn,yyline,yytext());}
- "AREA_TEXTO"                                                        {return new Symbol(sym.CLASEAREA,yycolumn,yyline,yytext());}
- ("CHECKBOX"|"RADIO"|"COMBO")                                        {return new Symbol(sym.CLASEOPCIONES,yycolumn,yyline,yytext());}
- "IMAGEN"                                                            {return new Symbol(sym.CLASEIMAGEN,yycolumn,yyline,yytext());}
- "BOTON"                                                             {return new Symbol(sym.CLASEBOTON,yycolumn,yyline,yytext());}
- "SI"|"NO"                                                           {return new Symbol(sym.BOOL,yycolumn,yyline,yytext());}
- "ELIMINAR_FORMULARIO"                                               {return new Symbol(sym.ELIMINARF,yycolumn,yyline,yytext());}
- "MODIFICAR_FORMULARIO"                                              {return new Symbol(sym.MODIFICARF,yycolumn,yyline,yytext());}
- "PARAMETROS_FORMULARIO"                                             {return new Symbol(sym.PARAMF,yycolumn,yyline,yytext());}
- "AGREGAR_COMPONENTE"                                                {return new Symbol(sym.AGREGARC,yycolumn,yyline,yytext());}
- "NOMBRE_CAMPO"      {return new Symbol(sym.NOMBREC,yycolumn,yyline,yytext());}
- "FORMULARIO"        {return new Symbol(sym.FORMULARIOC,yycolumn,yyline,yytext());}
- "CLASE"             {return new Symbol(sym.CLASE,yycolumn,yyline,yytext());}
- "INDICE"            {return new Symbol(sym.INDICEC,yycolumn,yyline,yytext());}
- "TEXTO_VISIBLE"     {return new Symbol(sym.TEXTOVC,yycolumn,yyline,yytext());}
- "ALINEACION"        {return new Symbol(sym.ALINEAC,yycolumn,yyline,yytext());}
- "REQUERIDO"         {return new Symbol(sym.REQUERIDO,yycolumn,yyline,yytext());}
- "OPCIONES"          {return new Symbol(sym.OPCIONES,yycolumn,yyline,yytext());}
- "FILAS"             {return new Symbol(sym.FILAS,yycolumn,yyline,yytext());}
- "COLUMNAS"          {return new Symbol(sym.COLUMNAS,yycolumn,yyline,yytext());}
- "URL"               {return new Symbol(sym.URLC,yycolumn,yyline,yytext());}
- "ELIMINAR_COMPONENTE"                                               {return new Symbol(sym.ELIMINARC,yycolumn,yyline,yytext());}
- "PARAMETROS_COMPONENTE"                                             {return new Symbol(sym.PARAMC,yycolumn,yyline,yytext());}
- "MODIFICAR_COMPONENTE"                                              {return new Symbol(sym.MODIFICARC,yycolumn,yyline,yytext());}
- "CREDENCIALES_USUARIO"                                              {return new Symbol(sym.CREDENCIALES,yycolumn,yyline,yytext());}
- "CONSULTAR_DATOS"                                                   {return new Symbol(sym.CONSULTARD,yycolumn,yyline,yytext());}
- "CONSULTAS"                                                         {return new Symbol(sym.CONSULTASP,yycolumn,yyline,yytext());}
+db.datos(
+	{
+		"ID_FORM":"$form1",
+		"NOMBRE":"formulario_encuesta_1_v2",
+		"REGISTROS":(
+		{
+			"REGISTRO_1":(
+				{
+					"ID_COMP":"$_profesores",
+					"NOMBRE_CAMPO":"Profesores",
+					"VALOR":"El Salvador"
+				},
+				{
+					"ID_COMP":"$_text_cliente",
+					"NOMBRE_CAMPO":"Cliente",
+					"VALOR":"Leila Maricarmen"
+				}
+			)
+		},
+		{
+			"REGISTRO_2":(
+				{
+					"ID_COMP":"$_text_cliente",
+					"NOMBRE_CAMPO":"Cliente",
+					"VALOR":"Maricarmen"
+				},
+				{
+					"ID_COMP":"$_profesores",
+					"NOMBRE_CAMPO":"Profesores",
+					"VALOR":"El Salvador"
+				}
+			)
+		},
+		{
+			"REGISTRO_3":(
+				{
+					"ID_COMP":"$_profesores",
+					"NOMBRE_CAMPO":"Profesores",
+					"VALOR":"Honduras"
+				},
+				{
+					"ID_COMP":"$_comediantes",
+					"NOMBRE_CAMPO":"formulario_comediantes",
+					"VALOR":"Camilo Sanchez"
+				},
+				{
+					"ID_COMP":"$_grupo_paises",
+					"NOMBRE_CAMPO":"Pais",
+					"VALOR":"Costa Rica"
+				},
+				{
+					"ID_COMP":"$_text_cliente",
+					"NOMBRE_CAMPO":"Cliente",
+					"VALOR":"Camilo"
+				}
+			)
+		},
+		{
+			"REGISTRO_4":(
+				{
+					"ID_COMP":"$_text_cliente",
+					"NOMBRE_CAMPO":"Cliente",
+					"VALOR":"Juan"
+				},
+				{
+					"ID_COMP":"$_grupo_paises",
+					"NOMBRE_CAMPO":"Pais",
+					"VALOR":"Guatemala"
+				},
+				{
+					"ID_COMP":"$_comediantes",
+					"NOMBRE_CAMPO":"formulario_comediantes",
+					"VALOR":"Camilo Diaz"
+				},
+				{
+					"ID_COMP":"$_profesores",
+					"NOMBRE_CAMPO":"Profesores",
+					"VALOR":"Guatemala"
+				}
+			)
+		}
+		)
+	}
+)

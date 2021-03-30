@@ -12,7 +12,7 @@ db.formularios(
 			"NOMBRE_CAMPO":"Cliente",
 			"CLASE":"CAMPO_TEXTO",
 			"TEXTO_VISIBLE":"Nombre de cliente:",
-			"INDICE":"0",
+			"INDICE":"1",
 			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI"
 		},
@@ -21,16 +21,10 @@ db.formularios(
 			"NOMBRE_CAMPO":"Pais",
 			"CLASE":"CHECKBOX",
 			"TEXTO_VISIBLE":"Pais de Origen:",
-			"INDICE":"1",
+			"INDICE":"2",
 			"ALINEACION":"DERECHA",
 			"REQUERIDO":"SI",
 			"OPCIONES" : "Guatemala|Costa Rica|Honduras|OTRO"
-		},
-		{
-			"ID_COMP":"$_boton_submit1",
-			"CLASE":"BOTON",
-			"TEXTO_VISIBLE":"SUBMIT",
-			"INDICE":"2"
 		},
 		{
 			"ID_COMP":"$_comediantes",
@@ -51,30 +45,12 @@ db.formularios(
 			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI",
 			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
-		}
-		),
-		"DATOS":(
-		{
-			"NOMBRE_CAMPO":"Pais",
-			"ID_COMP":"$_grupo_paises",
-			"REGISTRO_0" : "Guatemala",
-			"REGISTRO_1" : "Guatemala",
-			"REGISTRO_2" : "Guatemala",
-			"REGISTRO_3" : "El Salvador",
-			"REGISTRO_4" : "Honduras",
-			"REGISTRO_5" : "Guatemala"
-
 		},
 		{
-			"NOMBRE_CAMPO":"Cliente",
-			"ID_COMP":"$_text_cliente",
-			"REGISTRO_0" : "Jose",
-			"REGISTRO_1" : "Juan",
-			"REGISTRO_2" : "Pepe",
-			"REGISTRO_3" : "Willians Alberto",
-			"REGISTRO_4" : "Camilo Diaz",
-			"REGISTRO_5" : "El mago"
-
+			"ID_COMP":"$_boton_submit1",
+			"CLASE":"BOTON",
+			"TEXTO_VISIBLE":"SUBMIT",
+			"INDICE":"5"
 		}
 		)
 	},
@@ -91,13 +67,12 @@ db.formularios(
 			"NOMBRE_CAMPO":"Pais",
 			"CLASE":"COMBO",
 			"TEXTO_VISIBLE":"Pais de Origen:",
-			"INDICE":"0",
+			"INDICE":"1",
 			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI",
 			"OPCIONES" : "Guatemala: City|El Salvador|Honduras|OTRO"
 		}
-		),
-		"DATOS":()
+		)
 	},
 	{
 		"ID_FORM":"$form3",
@@ -111,10 +86,9 @@ db.formularios(
 			"ID_COMP":"$_boton_submit",
 			"CLASE":"BOTON",
 			"TEXTO_VISIBLE":"SUBMIT",
-			"INDICE":"0"
+			"INDICE":"1"
 		}
-		),
-		"DATOS":()
+		)
 	},
 	{
 		"ID_FORM":"$formularioDiaDeLasMadres",
@@ -123,8 +97,7 @@ db.formularios(
 		"TEMA":"White",
 		"USUARIO_CREACION":"ozymandias",
 		"FECHA_CREACION":"2021-03-26",
-		"COMPONENTES":(),
-		"DATOS":()
+		"COMPONENTES":()
 	},
 	{
 		"ID_FORM":"$formBurnout",
@@ -133,8 +106,7 @@ db.formularios(
 		"TEMA":"Dark",
 		"USUARIO_CREACION":"yelbetto",
 		"FECHA_CREACION":"2021-03-27",
-		"COMPONENTES":(),
-		"DATOS":()
+		"COMPONENTES":()
 	},
 	{
 		"ID_FORM":"$formIglesia",
@@ -143,8 +115,7 @@ db.formularios(
 		"TEMA":"White",
 		"USUARIO_CREACION":"monicaAyala",
 		"FECHA_CREACION":"2021-03-27",
-		"COMPONENTES":(),
-		"DATOS":()
+		"COMPONENTES":()
 	},
 	{
 		"ID_FORM":"$formularioCanchlas",
@@ -153,7 +124,6 @@ db.formularios(
 		"TEMA":"White",
 		"USUARIO_CREACION":"ozymandias",
 		"FECHA_CREACION":"2021-03-28",
-		"COMPONENTES":(),
-		"DATOS":()
+		"COMPONENTES":()
 	}
 )

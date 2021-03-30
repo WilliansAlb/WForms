@@ -9,8 +9,6 @@ package Analizadores;
 public class sym {
   /* terminals */
   public static final int COMILLAS = 2;
-  public static final int Parentesis_c = 25;
-  public static final int Parentesis_a = 24;
   public static final int BOOL = 22;
   public static final int CLASEOPCIONES = 68;
   public static final int CREARU = 8;
@@ -83,7 +81,9 @@ public class sym {
   public static final int MENORQ = 7;
   public static final int ALINEA = 21;
   public static final int MAYORQ = 6;
+  public static final int PARENTESISC = 25;
   public static final int NOCONSULTA = 73;
+  public static final int PARENTESISA = 24;
   public static final int REQUERIDO = 56;
   public static final int MAYORIGUAL = 81;
   public static final int AND = 78;
@@ -117,8 +117,8 @@ public class sym {
   "ALINEA",
   "BOOL",
   "DEC",
-  "Parentesis_a",
-  "Parentesis_c",
+  "PARENTESISA",
+  "PARENTESISC",
   "USUARIO",
   "FECHA",
   "IDP",

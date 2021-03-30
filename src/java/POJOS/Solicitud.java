@@ -17,12 +17,14 @@ public class Solicitud {
     private boolean tieneErrores;
     private ArrayList<Map<String,String>> cuantas;
     private String descripcion_error;
+    private ArrayList<Consulta> consulta;
     
     public Solicitud(){
         tipo = "";
         tieneErrores = false;
         cuantas = new ArrayList<>();
         descripcion_error = "";
+        consulta = new ArrayList<>();
     }
     
     public Solicitud(String tipo, boolean tieneErrores, ArrayList<Map<String,String>> cuantas, String descripcion_error){
@@ -63,5 +65,12 @@ public class Solicitud {
     public void setDescripcion_error(String descripcion_error) {
         this.descripcion_error = descripcion_error;
     }
-    
+
+    public ArrayList<Consulta> getConsulta() {
+        return consulta;
+    }
+
+    public void setConsulta(ArrayList<Consulta> consulta) {
+        this.consulta = consulta;
+    }
 }

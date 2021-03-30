@@ -2,19 +2,19 @@ db.usuarios(
 	{
 		"USUARIO":"yelbetto",
 		"PASSWORD":"asereje",
-		"FECHA_CREACION":"1998-21-07",
+		"FECHA_CREACION":"1998-01-07",
 		"FECHA_MODIFICACION":"2021-03-22"
 	},
 	{
 		"USUARIO":"cristeptesico",
 		"PASSWORD":"dueleamartetanto",
-		"FECHA_CREACION":"1998-21-07",
+		"FECHA_CREACION":"1998-01-07",
 		"FECHA_MODIFICACION":"2021-03-22"
 	},
 	{
 		"USUARIO":"monicaAyala",
 		"PASSWORD":"mazatenangolindo",
-		"FECHA_CREACION":"1998-21-07",
+		"FECHA_CREACION":"1998-01-07",
 		"FECHA_MODIFICACION":"2021-03-22"
 	},
 	{
@@ -46,7 +46,7 @@ db.usuarios(
 		"USUARIO":"papitoremolino23",
 		"PASSWORD":"papitoremolino23",
 		"FECHA_CREACION":"2021-03-23",
-		"FECHA_MODIFICACION":"1998-21-07"
+		"FECHA_MODIFICACION":"1998-01-07"
 	},
 	{
 		"USUARIO":"profesorBob",

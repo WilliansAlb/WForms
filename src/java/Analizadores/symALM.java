@@ -9,6 +9,7 @@ package Analizadores;
 public class symALM {
   /* terminals */
   public static final int NUMERO = 23;
+  public static final int INICIODATOS = 48;
   public static final int USUARIOCP = 18;
   public static final int CLASEIMAGEN = 42;
   public static final int NOMBREP = 16;
@@ -42,14 +43,15 @@ public class symALM {
   public static final int IDF = 13;
   public static final int IDC = 14;
   public static final int TEMA = 19;
-  public static final int DATOS = 47;
+  public static final int VALOR = 49;
   public static final int REQUERIDO = 31;
   public static final int FECHACP = 4;
   public static final int CLASENORMAL = 39;
+  public static final int REGISTROS = 50;
   public static final int INICIOUSUARIOS = 45;
   public static final int INDICEC = 28;
   public static final int DOSP = 3;
-  public static final int NOREGISTRO = 48;
+  public static final int NOREGISTRO = 47;
   public static final int URLC = 38;
   public static final int COLUMNAS = 37;
   public static final int CLASEOPCIONES = 41;
@@ -105,8 +107,10 @@ public class symALM {
   "INICIOFORM",
   "INICIOUSUARIOS",
   "COMPS",
-  "DATOS",
-  "NOREGISTRO"
+  "NOREGISTRO",
+  "INICIODATOS",
+  "VALOR",
+  "REGISTROS"
   };
 }
 

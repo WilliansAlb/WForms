@@ -9,6 +9,7 @@ import Analizadores.LexerALM;
 import Analizadores.parserALM;
 import POJOS.Componente;
 import POJOS.Formulario;
+import POJOS.Ingreso;
 import POJOS.Registro;
 import POJOS.Usuario;
 import java.io.BufferedWriter;
@@ -31,6 +32,7 @@ public class ControladorFormulario {
 
     ArrayList<Usuario> usuariosDB;
     ArrayList<Formulario> formsDB;
+    ArrayList<Formulario> datosDB;
     private String usuarioActual;
 
     public ControladorFormulario() {
@@ -73,9 +75,11 @@ public class ControladorFormulario {
                 }
             }
             String requerido = "";
+            String para_requerido = "";
             if (!analizado.getRequerido().isEmpty()) {
                 if (!analizado.getRequerido().equals("NO")) {
                     requerido = " required ";
+                    para_requerido = "*";
                 }
             }
             retorno += "<form id=\"formulario\" method=\"POST\" action=\"Ingresar\">";
@@ -89,24 +93,23 @@ public class ControladorFormulario {
                             + "<label for=\"" + analizado.getId() + "\"><img src=\"" + analizado.getUrl() + "\"></div></div>";
                     break;
                 case "CAMPO_TEXTO":
-
                     retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId()
-                            + "\">" + analizado.getTexto_visible() + "</label><input " + alineacion + " type=\"text\" id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" " + requerido + "></div></div>";
+                            + "\">" + analizado.getTexto_visible()+para_requerido + "</label><input " + alineacion + " type=\"text\" id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" " + requerido + "></div></div>";
                     break;
                 case "AREA_TEXTO":
                     retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\">"
-                            + "<label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible() + "</label><textarea " + alineacion + " id=\"" + analizado.getId() + "\" rows=\"" + analizado.getFilas() + "\" "
+                            + "<label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible()+para_requerido + "</label><textarea " + alineacion + " id=\"" + analizado.getId() + "\" rows=\"" + analizado.getFilas() + "\" "
                             + "cols=\"" + analizado.getColumnas() + "\" name=\"" + analizado.getNombre_campo() + "\" " + requerido + "></textarea></div></div>";
                     break;
                 case "CHECKBOX":
-                    retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible() + "</label>";
+                    retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible()+para_requerido + "</label><div class=\"paraRadio\">";
                     for (int j = 0; j < analizado.getOpciones().size(); j++) {
                         retorno += "<input type=\"checkbox\" id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" value=\"" + analizado.getOpciones().get(j) + "\">" + analizado.getOpciones().get(j);
                     }
-                    retorno += "</div></div>";
+                    retorno += "</div></div></div>";
                     break;
                 case "RADIO":
-                    retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible() + "</label><div>";
+                    retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible()+para_requerido + "</label><div class=\"paraRadio\">";
                     for (int j = 0; j < analizado.getOpciones().size(); j++) {
                         retorno += "<input type=\"radio\" id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" value=\"" + analizado.getOpciones().get(j) + "\">" + analizado.getOpciones().get(j);
                         retorno += "<br>";
@@ -114,7 +117,7 @@ public class ControladorFormulario {
                     retorno += "</div></div></div>";
                     break;
                 case "COMBO":
-                    retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible() + "</label>"
+                    retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible()+ para_requerido + "</label>"
                             + "<select id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" >";
                     for (int j = 0; j < analizado.getOpciones().size(); j++) {
                         retorno += "<option>" + analizado.getOpciones().get(j) + "</option>";
@@ -123,7 +126,7 @@ public class ControladorFormulario {
                     break;
                 case "FICHERO":
                     retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\">"
-                            + "<label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible() + "</label><input " + alineacion + " type=\"file\" id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" " + requerido + "></div></div>";
+                            + "<label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible()+para_requerido + "</label><input " + alineacion + " type=\"file\" id=\"" + analizado.getId() + "\" name=\"" + analizado.getNombre_campo() + "\" " + requerido + "></div></div>";
                     break;
                 default:
                     retorno += "<div class=\"contenedor " + contenedor + "\"><h1>ERRORSOTE</h1></div>";
@@ -134,42 +137,6 @@ public class ControladorFormulario {
         retorno += "</form>";
         if (retorno.isEmpty()) {
             retorno += "<div class=\"contenedor " + contenedor + "\"><h1>ERRORSOTE</h1></div>";
-        }
-        return retorno;
-    }
-
-    public String ingresarDatos(Registro[] reg) throws FileNotFoundException {
-        String retorno = "";
-        listado_formularios();
-        for (int i = 0; i < reg.length; i++) {
-            Registro temp = reg[i];
-            int pos = -1;
-            for (int j = 0; j < formsDB.size(); j++) {
-                if (formsDB.get(j).getId().equals(temp.getForm())) {
-                    pos = j;
-                    break;
-                }
-            }
-            if (pos != -1) {
-                int pos2 = -1;
-                for (int j = 0; j < formsDB.get(pos).getRegistros().size(); j++) {
-                    if (formsDB.get(pos).getRegistros().get(j).getId().equals(temp.getId())
-                            && formsDB.get(pos).getRegistros().get(j).getNombre().equals(temp.getNombre())) {
-                        pos2 = j;
-                        break;
-                    }
-                }
-                if (pos2 != -1) {
-                    formsDB.get(pos).getRegistros().get(pos2).getRegistros().add(temp.getRegistro());
-
-                    retorno += "INGRESADO";
-                } else {
-                    temp.getRegistros().add(temp.getRegistro());
-                    formsDB.get(pos).getRegistros().add(temp);
-                    retorno += "INGRESADO";
-                }
-                actualizarFormularios();
-            }
         }
         return retorno;
     }
@@ -208,6 +175,71 @@ public class ControladorFormulario {
             }
         }
         return temp;
+    }
+
+    public void listado_datos() throws FileNotFoundException {
+        String rutaArchivos = "C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/datos.txt";
+        File nuevo = new File(rutaArchivos);
+        parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
+        try {
+            par.parse();
+            datosDB = par.listado_datos;
+        } catch (Exception ex) {
+            System.out.println("Error por: " + ex.toString());
+        }
+    }
+
+    public String ingresarDatos(Registro[] re, String id, String nombre) {
+        String retorno = "";
+        try {
+            listado_datos();
+        } catch (FileNotFoundException ex) {
+            System.out.println("error en ingresar datos por: " + ex.toString());
+        }
+        ArrayList<Ingreso> ingresos = new ArrayList<>();
+        for (int i = 0; i < re.length; i++) {
+            ingresos.add(new Ingreso(re[i].getId(), re[i].getNombre(), re[i].getRegistro()));
+        }
+        if (!datosDB.isEmpty()) {
+            int pos = -1;
+            for (int j = 0; j < datosDB.size(); j++) {
+                if (datosDB.get(j).getId().equals(id)) {
+                    pos = j;
+                    break;
+                }
+            }
+            if (pos != -1) {
+                int registro = datosDB.get(pos).getRegistros().size() + 1;
+                String nombre_re = "REGISTRO_" + registro;
+                Registro nuevore = new Registro(nombre_re, ingresos);
+                datosDB.get(pos).getRegistros().add(nuevore);
+                retorno += "SE AGREGARON LOS DATOS NUEVOS AL CONJUNTO DE DATOS DEL FORMULARIO";
+            } else {
+                String nombre_re = "REGISTRO_1";
+                Registro nuevore = new Registro(nombre_re, ingresos);
+                Formulario nuevofo = new Formulario();
+                nuevofo.setId(id);
+                nuevofo.setNombre(nombre);
+                nuevofo.getRegistros().add(nuevore);
+                datosDB.add(nuevofo);
+                retorno+="SE AGREGO EL NUEVO ESPACIO PARA LOS DATOS DEL FORMULARIO";
+            }
+        } else {
+            String nombre_re = "REGISTRO_1";
+            Registro nuevore = new Registro(nombre_re, ingresos);
+            Formulario nuevofo = new Formulario();
+            nuevofo.setId(id);
+            nuevofo.setNombre(nombre);
+            nuevofo.getRegistros().add(nuevore);
+            datosDB.add(nuevofo);
+            retorno+="SE INICIO LA BASE DE DATOS";
+        }
+        if(retorno.isEmpty()){
+            retorno+="ERROR";
+        } else {
+            actualizarDatos();
+        }
+        return retorno;
     }
 
     public void actualizarFormularios() {
@@ -271,42 +303,11 @@ public class ControladorFormulario {
                         }
                         conteo++;
                     }
-                    out.println("\t\t),");
-                } else {
-                    out.println("\t\t\"COMPONENTES\":(),");
-                }
-                if (!formsDB.get(i).getRegistros().isEmpty()) {
-                    out.println("\t\t\"DATOS\":(");
-                    ArrayList<Registro> regs = formsDB.get(i).getRegistros();
-                    int conteo = 0;
-                    for (Registro compt : regs) {
-                        String posibles = "";
-                        out.println("\t\t{");
-                        out.println("\t\t\t\"NOMBRE_CAMPO\":\"" + compt.getNombre() + "\",");
-                        out.println("\t\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
-                        if (!compt.getRegistros().isEmpty()) {
-                            for (int j = 0; j < compt.getRegistros().size(); j++) {
-                                posibles += "\t\t\t\"REGISTRO_" + j + "\" : ";
-                                posibles += "\"" + compt.getRegistros().get(j) + "\"";
-                                if ((j + 1) != compt.getRegistros().size()) {
-                                    posibles += ",\n";
-                                }
-                            }
-                            out.println(posibles);
-                        } else {
-                            out.println(posibles.substring(0, posibles.length() - 2));
-                        }
-                        if ((conteo + 1) == regs.size()) {
-                            out.println("\t\t}");
-                        } else {
-                            out.println("\t\t},");
-                        }
-                        conteo++;
-                    }
                     out.println("\t\t)");
                 } else {
-                    out.println("\t\t\"DATOS\":()");
+                    out.println("\t\t\"COMPONENTES\":()");
                 }
+
                 if (i + 1 != formsDB.size()) {
                     out.println("\t},");
                 } else {
@@ -319,6 +320,62 @@ public class ControladorFormulario {
         }
     }
 
+    public void actualizarDatos() {
+        try (FileWriter fw = new FileWriter("C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/datos.txt", false);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter out = new PrintWriter(bw)) {
+            out.println("db.datos(");
+            for (int i = 0; i < datosDB.size(); i++) {
+                Formulario temp = datosDB.get(i);
+                out.println("\t{");
+                out.println("\t\t\"ID_FORM\":\"" + temp.getId() + "\",");
+                out.println("\t\t\"NOMBRE\":\"" + temp.getNombre() + "\",");
+                if (!datosDB.get(i).getRegistros().isEmpty()) {
+                    out.println("\t\t\"REGISTROS\":(");
+                    ArrayList<Registro> comps = datosDB.get(i).getRegistros();
+                    int conteo = 0;
+                    for (Registro compt : comps) {
+                        String posibles = "";
+                        out.println("\t\t{");
+                        out.println("\t\t\t\""+compt.getNoregistro()+"\":(");
+                        ArrayList<Ingreso> ings = compt.getValores();
+                        for (int j = 0; j < ings.size(); j++) {
+                            Ingreso in = ings.get(j);
+                            out.println("\t\t\t\t{");
+                            out.println("\t\t\t\t\t\"ID_COMP\":\""+in.getIdc()+"\",");
+                            out.println("\t\t\t\t\t\"NOMBRE_CAMPO\":\""+in.getNombrec()+"\",");
+                            out.println("\t\t\t\t\t\"VALOR\":\""+in.getDato()+"\"");
+                            if ((j+1)==ings.size()){
+                                out.println("\t\t\t\t}");
+                            } else {
+                                out.println("\t\t\t\t},");
+                            }
+                        }
+                        out.println("\t\t\t)");
+                        if ((conteo + 1) == comps.size()) {
+                            out.println("\t\t}");
+                        } else {
+                            out.println("\t\t},");
+                        }
+                        conteo++;
+                    }
+                    out.println("\t\t)");
+                } else {
+                    out.println("\t\t\"REGISTROS\":()");
+                }
+
+                if ((i + 1) != datosDB.size()) {
+                    out.println("\t},");
+                } else {
+                    out.println("\t}");
+                }
+            }
+            out.print(")");
+        } catch (IOException e) {
+            //exception handling left as an exercise for the reader
+        }
+    }
+    
     public void escribirParaDescarga(String id) {
         try {
             listado_formularios();
@@ -386,11 +443,10 @@ public class ControladorFormulario {
                             }
                             conteo++;
                         }
-                        out.println("\t\t),");
+                        out.println("\t\t)");
                     } else {
-                        out.println("\t\t\"COMPONENTES\":(),");
+                        out.println("\t\t\"COMPONENTES\":()");
                     }
-                    out.println("\t\t\"DATOS\":()");
                     out.println("\t\t}");
                 }
             }
