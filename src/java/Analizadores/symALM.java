@@ -56,6 +56,7 @@ public class symALM {
   public static final int COLUMNAS = 37;
   public static final int CLASEOPCIONES = 41;
   public static final int FILAS = 33;
+  public static final int INICIONEW = 51;
   public static final int LLAVEC = 21;
   public static final int LLAVEA = 20;
   public static final int OPCIONES = 32;
@@ -110,7 +111,8 @@ public class symALM {
   "NOREGISTRO",
   "INICIODATOS",
   "VALOR",
-  "REGISTROS"
+  "REGISTROS",
+  "INICIONEW"
   };
 }
 

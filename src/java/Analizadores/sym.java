@@ -52,6 +52,7 @@ public class sym {
   public static final int NOMBREC = 44;
   public static final int USUARIONP = 12;
   public static final int FINE = 5;
+  public static final int ERRORLEX = 84;
   public static final int ALINEAC = 55;
   public static final int COLUMNAS = 59;
   public static final int INDICEC = 53;
@@ -176,7 +177,8 @@ public class sym {
   "IGUAL",
   "MAYORIGUAL",
   "MENORIGUAL",
-  "APOSTROFE"
+  "APOSTROFE",
+  "ERRORLEX"
   };
 }
 

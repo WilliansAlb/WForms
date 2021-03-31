@@ -1,8 +1,8 @@
 new.formulario(
 	{
 		"ID_FORM":"$form1",
-		"TITULO":"Formulario para encuesta: 1",
-		"NOMBRE":"formulario_encuesta_1",
+		"TITULO":"Formulario Modificado para encuesta 1",
+		"NOMBRE":"formulario_encuesta_1_v2",
 		"TEMA":"Blue",
 		"USUARIO_CREACION":"ozymandias",
 		"FECHA_CREACION":"2021-03-26",
@@ -19,9 +19,29 @@ new.formulario(
 		{
 			"ID_COMP":"$_grupo_paises",
 			"NOMBRE_CAMPO":"Pais",
-			"CLASE":"COMBO",
+			"CLASE":"CHECKBOX",
 			"TEXTO_VISIBLE":"Pais de Origen:",
 			"INDICE":"1",
+			"ALINEACION":"DERECHA",
+			"REQUERIDO":"SI",
+			"OPCIONES" : "Guatemala|Costa Rica|Honduras|OTRO"
+		},
+		{
+			"ID_COMP":"$_comediantes",
+			"NOMBRE_CAMPO":"formulario_comediantes",
+			"CLASE":"RADIO",
+			"TEXTO_VISIBLE":"Los mejores comediantes",
+			"INDICE":"2",
+			"ALINEACION":"DERECHA",
+			"REQUERIDO":"NO",
+			"OPCIONES" : "Ibrahim Salem|Camilo Diaz|Camilo Sanchez|Otro"
+		},
+		{
+			"ID_COMP":"$_profesores",
+			"NOMBRE_CAMPO":"Profesores",
+			"CLASE":"COMBO",
+			"TEXTO_VISIBLE":"Profesores excelentes:",
+			"INDICE":"3",
 			"ALINEACION":"CENTRO",
 			"REQUERIDO":"SI",
 			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
@@ -30,19 +50,8 @@ new.formulario(
 			"ID_COMP":"$_boton_submit1",
 			"CLASE":"BOTON",
 			"TEXTO_VISIBLE":"SUBMIT",
-			"INDICE":"2"
-		},
-		{
-			"ID_COMP":"$_comediantes",
-			"NOMBRE_CAMPO":"formulario_comediantes",
-			"CLASE":"RADIO",
-			"TEXTO_VISIBLE":"Los mejores comediantes",
-			"INDICE":"3",
-			"ALINEACION":"DERECHA",
-			"REQUERIDO":"NO",
-			"OPCIONES" : "Ibrahim Salem|Camilo Diaz|Camilo Sanchez|Otro"
+			"INDICE":"4"
 		}
-		),
-		"DATOS":()
+		)
 		}
 )

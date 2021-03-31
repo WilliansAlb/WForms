@@ -47,6 +47,8 @@ public class ControladorUsuario {
     ArrayList<Formulario> formsDB;
     ArrayList<Formulario> datosDB;
     public String consultades = "";
+    public String errorades = "";
+    public boolean tieneError = false;
     Map<String, ArrayList<String>> mapa = new HashMap<>();
     private String usuarioActual;
 
@@ -63,49 +65,72 @@ public class ControladorUsuario {
         String retorno = "<!ini_respuestas>\n";
         try {
             par.parse();
-            ArrayList<Solicitud> halla = par.lista_solicitudes;
-            for (int i = 0; i < halla.size(); i++) {
-                Solicitud temp = halla.get(i);
-                switch (temp.getTipo()) {
-                    case "CREAR_USUARIO":
-                        retorno += crearUsuario2(temp);
-                        break;
-                    case "MODIFICAR_USUARIO":
-                        retorno += modificarUsuario(temp);
-                        break;
-                    case "ELIMINAR_USUARIO":
-                        retorno += eliminarUsuario(temp);
-                        break;
-                    case "NUEVO_FORMULARIO":
-                        retorno += crearFormulario(temp);
-                        break;
-                    case "ELIMINAR_FORMULARIO":
-                        retorno += eliminarFormulario(temp);
-                        break;
-                    case "MODIFICAR_FORMULARIO":
-                        retorno += modificarFormulario(temp);
-                        break;
-                    case "AGREGAR_COMPONENTE":
-                        retorno += agregarComponente(temp);
-                        break;
-                    case "ELIMINAR_COMPONENTE":
-                        retorno += eliminarComponente(temp);
-                        break;
-                    case "MODIFICAR_COMPONENTE":
-                        retorno += modificarComponente(temp);
-                        break;
-                    case "CONSULTAR_DATOS":
-                        retorno += realizarConsultas(temp);
-                        break;
-                    default:
-                        break;
+            if (!par.error) {
+                ArrayList<Solicitud> halla = par.lista_solicitudes;
+                for (int i = 0; i < halla.size(); i++) {
+                    Solicitud temp = halla.get(i);
+                    switch (temp.getTipo()) {
+                        case "CREAR_USUARIO":
+                            retorno += crearUsuario2(temp);
+                            break;
+                        case "MODIFICAR_USUARIO":
+                            retorno += modificarUsuario(temp);
+                            break;
+                        case "ELIMINAR_USUARIO":
+                            retorno += eliminarUsuario(temp);
+                            break;
+                        case "NUEVO_FORMULARIO":
+                            retorno += crearFormulario(temp);
+                            break;
+                        case "ELIMINAR_FORMULARIO":
+                            retorno += eliminarFormulario(temp);
+                            break;
+                        case "MODIFICAR_FORMULARIO":
+                            retorno += modificarFormulario(temp);
+                            break;
+                        case "AGREGAR_COMPONENTE":
+                            retorno += agregarComponente(temp);
+                            break;
+                        case "ELIMINAR_COMPONENTE":
+                            retorno += eliminarComponente(temp);
+                            break;
+                        case "MODIFICAR_COMPONENTE":
+                            retorno += modificarComponente(temp);
+                            break;
+                        case "CONSULTAR_DATOS":
+                            retorno += realizarConsultas(temp);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                tieneError = true;
+                for (int i = 0; i < par.errores.size(); i++) {
+                    POJOS.Errores te = par.errores.get(i);
+                    String lis = "[";
+                    for (String s : te.getEsperados()) {
+                        lis += s;
+                        if (!s.equals(te.getEsperados().get(te.getEsperados().size() - 1))) {
+                            lis += ",";
+                        }
+                    }
+                    lis += "]";
+                    errorades += lis + "\n";
+                    errorades += te.getNombre() + "\n";
+                    errorades += te.getTipo() + "\n";
+                    errorades += te.getEncontrado().value + "\n";
+                    errorades += te.getEncontrado().right + "\n";
+                    errorades += te.getEncontrado().left + "\t";
                 }
             }
         } catch (Exception ex) {
             System.out.println("Error por: " + ex.toString());
         }
-        actualizarUsuarios();
-        actualizarFormularios();
+        if (!tieneError) {
+            actualizarUsuarios();
+            actualizarFormularios();
+        }
         retorno += "<!fin_solicitudes>";
         return retorno;
     }
@@ -165,8 +190,8 @@ public class ControladorUsuario {
                             }
                         }
                         if (conteo_res != conteo_total) {
-                            retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                            retorno += "         \"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                            retorno += "\t\t\"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n\t}";
                         } else {
                             ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
                             for (int j = 0; j < soloCondiciones.size(); j++) {
@@ -263,8 +288,8 @@ public class ControladorUsuario {
                                     }
                                 }
                                 if (conteo_res != conteo_total) {
-                                    retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                                    retorno += "         \"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n      }";
+                                    retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                                    retorno += "\t\t\"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n\t}";
                                 } else {
                                     ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
                                     for (int j = 0; j < soloCondiciones.size(); j++) {
@@ -329,15 +354,15 @@ public class ControladorUsuario {
                                 }
                             }
                         } else {
-                            retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                            retorno += "         \"DESCRIPCION\":\"UNO O VARIOS CAMPOS QUE SOLICITASTE NO FORMAN PARTE DE LOS COMPONENTES DEL FORMULARIO\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                            retorno += "\t\t\"DESCRIPCION\":\"UNO O VARIOS CAMPOS QUE SOLICITASTE NO FORMAN PARTE DE LOS COMPONENTES DEL FORMULARIO\"\n\t}";
                         }
                     }
                 }
 
             } else {
-                retorno += "         \"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                retorno += "         \"DESCRIPCION\":\"EL FORMULARIO AUN NO TIENE DATOS INGRESADOS, POR LO QUE TU CONSULTA NO DEVUELVE NADA\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                retorno += "\t\t\"DESCRIPCION\":\"EL FORMULARIO AUN NO TIENE DATOS INGRESADOS, POR LO QUE TU CONSULTA NO DEVUELVE NADA\"\n\t}";
             }
             if ((i + 1) != cons.size()) {
                 retorno += "\t},\n";
@@ -363,7 +388,7 @@ public class ControladorUsuario {
      */
     public String respuestaConsulta(ArrayList<Registro> res, Consulta analizando, ArrayList<Componente> co, int opcion) {
         String retorno = "";
-        String t3 = "\t\t";
+        String t3 = "\t";
         retorno += t3 + "\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
         consultades += analizando.getNoconsulta() + "\n";
         switch (opcion) {
@@ -475,7 +500,7 @@ public class ControladorUsuario {
                 datosec.add(tep.getNoregistro());
                 for (int k = 0; k < tep.getValores().size(); k++) {
                     retorno += t3 + "\t\"" + tep.getValores().get(k).getNombrec() + "\":\"" + tep.getValores().get(k).getDato() + "\"";
-                    if (!tep.getValores().get(k).getDato().isEmpty()){
+                    if (!tep.getValores().get(k).getDato().isEmpty()) {
                         datosec.add(tep.getValores().get(k).getDato());
                     } else {
                         datosec.add(" ");
@@ -491,12 +516,12 @@ public class ControladorUsuario {
                     retorno += ",\n";
                 }
             }
-            for (String s:camposec){
-                consultades += s+" <///>";
+            for (String s : camposec) {
+                consultades += s + " <///>";
             }
             consultades += "\n";
-            for (String s:datosec){
-                consultades += s+" <///>";
+            for (String s : datosec) {
+                consultades += s + " <///>";
             }
             consultades += "\t";
             retorno += "\n" + t3 + "]\n";
@@ -710,18 +735,13 @@ public class ControladorUsuario {
         retorno += dePrueba2(texto, usuario);
         try {
             par.parse();
-            ArrayList<Solicitud> halla = par.lista_solicitudes;
-            ArrayList<Consulta> halla2 = par.lista_consultas;
-            if (!halla2.isEmpty()) {
-                for (int i = 0; i < halla2.size(); i++) {
-                    Consulta c = halla2.get(i);
-                    System.out.println("Consulta numero: " + halla2.get(i).getNoconsulta() + " del Formulario: " + halla2.get(i).getForm() + " sacara " + halla2.get(i).getCampos().size());
-                    for (int j = 0; j < c.getPuentes().size(); j++) {
-                        System.out.println("Puente " + j + ": " + c.getPuentes().get(j));
+            if (par.error) {
+                for (int i = 0; i < par.errores.size(); i++) {
+                    POJOS.Errores te = par.errores.get(i);
+                    for (String s : te.getEsperados()) {
+                        System.out.print(s);
                     }
-                    for (int j = 0; j < c.getRestricciones().size(); j++) {
-                        System.out.println("Restricciones " + j + ": " + c.getRestricciones().get(j));
-                    }
+                    System.out.println("Simbolo: " + te.getEncontrado().value + " Linea: " + te.getEncontrado().right + " Columna: " + te.getEncontrado().left);
                 }
             }
         } catch (Exception ex) {
@@ -742,7 +762,7 @@ public class ControladorUsuario {
             if (simbolito.value == null) {
                 break;
             }
-            System.out.println("valor token:" + simbolito.value);
+            //System.out.println("valor token:" + simbolito.value);
         }
         retorno += "<!fin_solicitudes>";
         return retorno;
@@ -755,38 +775,58 @@ public class ControladorUsuario {
         String retorno = "";
         try {
             par.parse();
-            ArrayList<Solicitud> halla = par.lista_solicitudes;
-            if (halla.size() > 0) {
-                if (halla.get(0).getTipo().equalsIgnoreCase("LOGIN")) {
-                    System.out.println("entra");
-                    int conteo = 0;
-                    for (int i = 0; i < halla.size(); i++) {
-                        if (halla.get(i).getTipo().equalsIgnoreCase("LOGIN")) {
-                            conteo++;
-                        }
-                    }
-                    if (conteo > 1) {
-                        retorno += "Mandas la solicitud más de un login, solo se permite que hagas una";
-                    } else {
-                        Map<String, String> usuario = halla.get(0).getCuantas().get(0);
-                        boolean existe = false;
-                        for (int i = 0; i < usuariosDB.size(); i++) {
-                            if (usuariosDB.get(i).getUsuario().equals(usuario.get("USUARIO"))
-                                    && usuariosDB.get(i).getPassword().equals(usuario.get("CONTRA"))) {
-                                existe = true;
-                                break;
+            if (!par.error) {
+                ArrayList<Solicitud> halla = par.lista_solicitudes;
+                if (halla.size() > 0) {
+                    if (halla.get(0).getTipo().equalsIgnoreCase("LOGIN")) {
+                        int conteo = 0;
+                        for (int i = 0; i < halla.size(); i++) {
+                            if (halla.get(i).getTipo().equalsIgnoreCase("LOGIN")) {
+                                conteo++;
                             }
                         }
-                        if (existe) {
-                            setUsuarioActual(usuario.get("USUARIO"));
-                            retorno += analizarSolicitudes(texto, getUsuarioActual());
+                        if (conteo > 1) {
+                            retorno += "Mandas la solicitud más de un login, solo se permite que hagas una";
                         } else {
-                            retorno += "Las credenciales que ingresaste no corresponden a ningún usuario";
+                            Map<String, String> usuario = halla.get(0).getCuantas().get(0);
+                            boolean existe = false;
+                            for (int i = 0; i < usuariosDB.size(); i++) {
+                                if (usuariosDB.get(i).getUsuario().equals(usuario.get("USUARIO"))
+                                        && usuariosDB.get(i).getPassword().equals(usuario.get("CONTRA"))) {
+                                    existe = true;
+                                    break;
+                                }
+                            }
+                            if (existe) {
+                                setUsuarioActual(usuario.get("USUARIO"));
+                                retorno += analizarSolicitudes(texto, getUsuarioActual());
+                            } else {
+                                retorno += "Las credenciales que ingresaste no corresponden a ningún usuario";
+                            }
                         }
                     }
+                } else {
+                    retorno += "Sin mandar nada";
                 }
             } else {
-                retorno += "Sin mandar nada";
+                tieneError = true;
+                for (int i = 0; i < par.errores.size(); i++) {
+                    POJOS.Errores te = par.errores.get(i);
+                    String lis = "[";
+                    for (String s : te.getEsperados()) {
+                        lis += s;
+                        if (!s.equals(te.getEsperados().get(te.getEsperados().size() - 1))) {
+                            lis += ",";
+                        }
+                    }
+                    lis += "]";
+                    errorades += lis + "\n";
+                    errorades += te.getNombre() + "\n";
+                    errorades += te.getTipo() + "\n";
+                    errorades += te.getEncontrado().value + "\n";
+                    errorades += te.getEncontrado().right + "\n";
+                    errorades += te.getEncontrado().left + "\t";
+                }
             }
         } catch (Exception ex) {
             System.out.println("Error por en metodo analizar: " + ex.toString());
@@ -879,12 +919,12 @@ public class ControladorUsuario {
     }
 
     public String crearUsuario2(Solicitud crearU) {
-        String retorno = "   <!ini_respuesta:\"CREAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"CREAR_USUARIO\">\n\t{\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < crearU.getCuantas().size(); j++) {
             Map<String, String> mapeado = crearU.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("USUARIO")) {
                     if (idsUs.isEmpty()) {
@@ -896,13 +936,13 @@ public class ControladorUsuario {
                                 retorno += creandoUsuario(mapeado.get("USUARIO"), mapeado.get("CONTRA"), fechaActual());
                             }
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"Falta la contraseña para poder crear el usuario\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta la contraseña para poder crear el usuario\"\n\t}";
                         }
                     } else {
                         if (idsUs.contains(mapeado.get("USUARIO"))) {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"El usuario que se intenta crear ya fue solicitado previamente en esta misma solicitud\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"El usuario que se intenta crear ya fue solicitado previamente en esta misma solicitud\"\n\t}";
                         } else {
                             idsUs.add(mapeado.get("USUARIO"));
                             if (mapeado.containsKey("USUARIO") && mapeado.containsKey("CONTRA")) {
@@ -912,14 +952,14 @@ public class ControladorUsuario {
                                     retorno += creandoUsuario(mapeado.get("USUARIO"), mapeado.get("CONTRA"), fechaActual());
                                 }
                             } else {
-                                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                                retorno += "         \"DESCRIPCION_ERROR\":\"Falta la contraseña para poder crear el usuario\"\n      }";
+                                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta la contraseña para poder crear el usuario\"\n\t}";
                             }
                         }
                     }
                 } else {
-                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el parametro más importante (USUARIO)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el parametro más importante (USUARIO)\"\n\t}";
                 }
                 if ((j + 1) != crearU.getCuantas().size()) {
                     retorno += ",\n";
@@ -927,13 +967,13 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -948,21 +988,21 @@ public class ControladorUsuario {
         if (posicion == -1) {
             Usuario temp = new Usuario(usuario, contra, fecha_creacion);
             usuariosDB.add(temp);
-            retorno += "         \"ESTADO\":\"USUARIO MODIFICADO\"\n      }";
+            retorno += "\t\t\"ESTADO\":\"USUARIO MODIFICADO\"\n\t}";
         } else {
-            retorno += "         \"ESTADO\":\"ERROR\",\n";
-            retorno += "         \"DESCRIPCION_ERROR\":\"El usuario que tratas de crear ya existe en la base de datos\"\n      }";
+            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+            retorno += "\t\t\"DESCRIPCION_ERROR\":\"El usuario que tratas de crear ya existe en la base de datos\"\n\t}";
         }
         return retorno;
     }
 
     public String crearFormulario(Solicitud crearU) {
-        String retorno = "   <!ini_respuesta:\"NUEVO_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"NUEVO_FORMULARIO\">\n\t{\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < crearU.getCuantas().size(); j++) {
             Map<String, String> mapeado = crearU.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")) {
                     if (idsUs.isEmpty()) {
@@ -976,13 +1016,13 @@ public class ControladorUsuario {
                             }
                             retorno += creandoFormulario(mapeado);
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"Faltan parametros obligatorios (TITULO, TEMA, NOMBRE)\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"Faltan parametros obligatorios (TITULO, TEMA, NOMBRE)\"\n\t}";
                         }
                     } else {
                         if (idsUs.contains(mapeado.get("ID"))) {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"El ID del formulario que se intenta ingresar ya existe\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"El ID del formulario que se intenta ingresar ya existe\"\n\t}";
                         } else {
                             idsUs.add(mapeado.get("ID"));
                             if (mapeado.containsKey("ID") && mapeado.containsKey("TEMA") && mapeado.containsKey("TITULO") && mapeado.containsKey("NOMBRE")) {
@@ -994,14 +1034,14 @@ public class ControladorUsuario {
                                 }
                                 retorno += creandoFormulario(mapeado);
                             } else {
-                                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                                retorno += "         \"DESCRIPCION_ERROR\":\"Faltan parametros obligatorios (TITULO, TEMA, NOMBRE)\"\n      }";
+                                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Faltan parametros obligatorios (TITULO, TEMA, NOMBRE)\"\n\t}";
                             }
                         }
                     }
                 } else {
-                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,TITULO,NOMBRE,TEMA)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,TITULO,NOMBRE,TEMA)\"\n\t}";
                 }
                 if ((j + 1) != crearU.getCuantas().size()) {
                     retorno += ",\n";
@@ -1009,14 +1049,13 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "      {\n";
-                retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1037,21 +1076,21 @@ public class ControladorUsuario {
             temp.setUsuario(mapeado.get("USUARIO_CREACION"));
             temp.setFecha(mapeado.get("FECHA"));
             formsDB.add(temp);
-            retorno += "         \"ESTADO\":\"FORMULARIO INGRESADO\"\n      }";
+            retorno += "\t\t\"ESTADO\":\"FORMULARIO INGRESADO\"\n\t}";
         } else {
-            retorno += "         \"ESTADO\":\"ERROR\",\n";
-            retorno += "         \"DESCRIPCION_ERROR\":\"El formulario que intentas crear ya existe\"\n      }";
+            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+            retorno += "\t\t\"DESCRIPCION_ERROR\":\"El formulario que intentas crear ya existe\"\n\t}";
         }
         return retorno;
     }
 
     public String agregarComponente(Solicitud modificarForm) {
-        String retorno = "   <!ini_respuesta:\"AGREGAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
+        String retorno = "<!ini_respuesta:\"AGREGAR_COMPONENTE\">\n\t{\"PARAMETROS_COMPONENTE\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
             Map<String, String> mapeado = modificarForm.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")
                         && mapeado.containsKey("FORMULARIO")
@@ -1076,16 +1115,16 @@ public class ControladorUsuario {
                         if (posicion_componente == -1) {
                             retorno += agregandoComponente(mapeado, posicion);
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"Ya existe un componente con el id que se envio\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"Ya existe un componente con el id que se envio\"\n\t}";
                         }
                     } else {
-                        retorno += "         \"ESTADO\":\"ERROR\",\n";
-                        retorno += "         \"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n      }";
+                        retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                        retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n\t}";
                     }
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,NOMBRE_CAMPO,FORMULARIO,CLASE)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,NOMBRE_CAMPO,FORMULARIO,CLASE)\"\n\t}";
                 }
                 if ((j + 1) != modificarForm.getCuantas().size()) {
                     retorno += ",\n";
@@ -1093,13 +1132,13 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1114,16 +1153,16 @@ public class ControladorUsuario {
         switch (mapeado.get("CLASE")) {
             case "BOTON":
                 formsDB.get(posicion).getComponentes().add(nuevo);
-                retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 break;
             case "IMAGEN":
                 if (mapeado.containsKey("URL")) {
                     nuevo.setUrl(mapeado.get("URL"));
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el url\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el url\"\n\t}";
                 }
                 break;
             case "CAMPO_TEXTO":
@@ -1136,10 +1175,10 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.get("REQUERIDO"));
                     }
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n\t}";
                 }
                 break;
             case "AREA_TEXTO":
@@ -1156,10 +1195,10 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.get("REQUERIDO"));
                     }
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n\t}";
                 }
                 break;
             case "CHECKBOX":
@@ -1178,10 +1217,10 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.get("REQUERIDO"));
                     }
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n\t}";
                 }
                 break;
             case "RADIO":
@@ -1200,10 +1239,10 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.get("REQUERIDO"));
                     }
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n\t}";
                 }
                 break;
             case "COMBO":
@@ -1222,10 +1261,10 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.get("REQUERIDO"));
                     }
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n\t}";
                 }
                 break;
             case "FICHERO":
@@ -1238,10 +1277,10 @@ public class ControladorUsuario {
                         nuevo.setRequerido(mapeado.get("REQUERIDO"));
                     }
                     formsDB.get(posicion).getComponentes().add(nuevo);
-                    retorno += "         \"ESTADO\":\"COMPONENTE INGRESADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE INGRESADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n\t}";
                 }
                 break;
             default:
@@ -1251,12 +1290,12 @@ public class ControladorUsuario {
     }
 
     public String modificarComponente(Solicitud modificarForm) {
-        String retorno = "   <!ini_respuesta:\"AGREGAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
+        String retorno = "<!ini_respuesta:\"MODIFICAR_COMPONENTE\">\n\t{\"PARAMETROS_COMPONENTE\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
             Map<String, String> mapeado = modificarForm.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")
                         && mapeado.containsKey("FORMULARIO")) {
@@ -1278,22 +1317,22 @@ public class ControladorUsuario {
                         }
                         if (posicion_componente != -1) {
                             if (mapeado.size() == 2) {
-                                retorno += "         \"ESTADO\":\"SIN MODIFICAR\",\n";
-                                retorno += "         \"MOTIVO\":\"No se mando ningun parametro para modificar\"\n      }";
+                                retorno += "\t\t\"ESTADO\":\"SIN MODIFICAR\",\n";
+                                retorno += "\t\t\"MOTIVO\":\"No se mando ningun parametro para modificar\"\n\t}";
                             } else {
                                 retorno += modificandoComponente(mapeado, posicion, posicion_componente);
                             }
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"Ya existe un componente con el id que se envio\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"No existe un componente con el id que se envio\"\n\t}";
                         }
                     } else {
-                        retorno += "         \"ESTADO\":\"ERROR\",\n";
-                        retorno += "         \"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n      }";
+                        retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                        retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede agregar un componente a un formulario que no existe\"\n\t}";
                     }
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede modificar el componente si no se especifica ninguno de los siguientes (ID,FORMULARIO)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede modificar el componente si no se especifica ninguno de los siguientes (ID,FORMULARIO)\"\n\t}";
                 }
                 if ((j + 1) != modificarForm.getCuantas().size()) {
                     retorno += ",\n";
@@ -1301,13 +1340,13 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1365,17 +1404,17 @@ public class ControladorUsuario {
             case "BOTON":
                 formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                 retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 break;
             case "IMAGEN":
                 if (!mapeado.getUrl().isEmpty()) {
                     nuevo.setUrl(mapeado.getUrl());
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el url\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el url\"\n\t}";
                 }
                 break;
             case "CAMPO_TEXTO":
@@ -1389,10 +1428,10 @@ public class ControladorUsuario {
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n\t}";
                 }
                 break;
             case "AREA_TEXTO":
@@ -1410,10 +1449,10 @@ public class ControladorUsuario {
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n\t}";
                 }
                 break;
             case "CHECKBOX":
@@ -1429,10 +1468,10 @@ public class ControladorUsuario {
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n\t}";
                 }
                 break;
             case "RADIO":
@@ -1448,10 +1487,10 @@ public class ControladorUsuario {
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n\t}";
                 }
                 break;
             case "COMBO":
@@ -1467,10 +1506,10 @@ public class ControladorUsuario {
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta alguno de los siguientes parametros (NOMBRE_CAMPO, OPCIONES)\"\n\t}";
                 }
                 break;
             case "FICHERO":
@@ -1484,10 +1523,10 @@ public class ControladorUsuario {
                     }
                     formsDB.get(pos).getComponentes().set(pos_componente, nuevo);
                     retorno += cambiarIndice(pos, pos_componente, mapeado.getIndice());
-                    retorno += "         \"ESTADO\":\"COMPONENTE MODIFICADO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"COMPONENTE MODIFICADO\"\n\t}";
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el nombre del campo\"\n\t}";
                 }
                 break;
             default:
@@ -1533,28 +1572,28 @@ public class ControladorUsuario {
                             }
                             formsDB.get(pos).setComponentes(temporal);
                         }
-                        retorno += "         \"NOTA\":\"Fue cambiado el indice del componente de " + pos_comp + " a " + indice + "\",\n";
+                        retorno += "\t\t\"NOTA\":\"Fue cambiado el indice del componente de " + pos_comp + " a " + indice + "\",\n";
                     } else {
-                        retorno += "         \"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
+                        retorno += "\t\t\"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
                     }
                 } else {
-                    retorno += "         \"NOTA\":\"El indice al que intentas mover el componente no existe\",\n";
+                    retorno += "\t\t\"NOTA\":\"El indice al que intentas mover el componente no existe\",\n";
                 }
             } else {
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"El indice debe ser mayor que 0\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"El indice debe ser mayor que 0\"\n\t}";
             }
         }
         return retorno;
     }
 
     public String eliminarComponente(Solicitud eliminarComp) {
-        String retorno = "   <!ini_respuesta:\"ELIMINAR_COMPONENTE\">\n      {\"PARAMETROS_COMPONENTE\":[\n";
+        String retorno = "<!ini_respuesta:\"ELIMINAR_COMPONENTE\">\n\t{\"PARAMETROS_COMPONENTE\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < eliminarComp.getCuantas().size(); j++) {
             Map<String, String> mapeado = eliminarComp.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")
                         && mapeado.containsKey("FORMULARIO")) {
@@ -1576,18 +1615,18 @@ public class ControladorUsuario {
                         }
                         if (posicion_componente != -1) {
                             formsDB.get(posicion).getComponentes().remove(posicion_componente);
-                            retorno += "         \"ESTADO\":\"COMPONENTE ELIMINADO\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"COMPONENTE ELIMINADO\"\n\t}";
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el componente que tratas de eliminar\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"No existe el componente que tratas de eliminar\"\n\t}";
                         }
                     } else {
-                        retorno += "         \"ESTADO\":\"ERROR\",\n";
-                        retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que contiene el componente que tratas de eliminar\"\n      }";
+                        retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                        retorno += "\t\t\"DESCRIPCION_ERROR\":\"No existe el formulario que contiene el componente que tratas de eliminar\"\n\t}";
                     }
                 } else {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede eliminar un componente sin alguno de los siguientes parametros ID,FORMULARIO\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede eliminar un componente sin alguno de los siguientes parametros ID,FORMULARIO\"\n\t}";
                 }
                 if ((j + 1) != eliminarComp.getCuantas().size()) {
                     retorno += ",\n";
@@ -1595,23 +1634,23 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
     public String modificarFormulario(Solicitud modificarForm) {
-        String retorno = "   <!ini_respuesta:\"MODIFICAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"MODIFICAR_FORMULARIO\">\n\t{\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < modificarForm.getCuantas().size(); j++) {
             Map<String, String> mapeado = modificarForm.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")) {
                     if (idsUs.isEmpty()) {
@@ -1620,27 +1659,27 @@ public class ControladorUsuario {
                                 && (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
                             retorno += modificandoFormulario(mapeado);
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"Faltan algun parametro para modificar (TITULO, TEMA, NOMBRE)\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"Faltan algun parametro para modificar (TITULO, TEMA, NOMBRE)\"\n\t}";
                         }
                     } else {
                         if (idsUs.contains(mapeado.get("ID"))) {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"El ID del formulario que se intenta ingresar ya existe\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"El ID del formulario que se intenta ingresar ya existe\"\n\t}";
                         } else {
                             idsUs.add(mapeado.get("ID"));
                             if (mapeado.containsKey("ID")
                                     && (mapeado.containsKey("TEMA") || mapeado.containsKey("TITULO") || mapeado.containsKey("NOMBRE"))) {
                                 retorno += modificandoFormulario(mapeado);
                             } else {
-                                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                                retorno += "         \"DESCRIPCION_ERROR\":\"Faltan algun parametro para modificar (TITULO, TEMA, NOMBRE)\"\n      }";
+                                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Faltan algun parametro para modificar (TITULO, TEMA, NOMBRE)\"\n\t}";
                             }
                         }
                     }
                 } else {
-                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,TITULO,NOMBRE,TEMA)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"No se puede crear el formulario sin alguno de los siguientes parametros (ID,TITULO,NOMBRE,TEMA)\"\n\t}";
                 }
                 if ((j + 1) != modificarForm.getCuantas().size()) {
                     retorno += ",\n";
@@ -1648,14 +1687,14 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
         }
 
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1681,22 +1720,22 @@ public class ControladorUsuario {
                 formsDB.get(posicion).setNombre(mapeado.get("NOMBRE"));
                 modificados += "NOMBRE-";
             }
-            retorno += "         \"ESTADO\":\"FORMULARIO MODIFICADO\",\n";
-            retorno += "         \"NOTA\":\"Los siguientes parametros del formulario " + mapeado.get("ID") + " fueron modificados " + modificados + "\"\n      }";
+            retorno += "\t\t\"ESTADO\":\"FORMULARIO MODIFICADO\",\n";
+            retorno += "\t\t\"NOTA\":\"Los siguientes parametros del formulario " + mapeado.get("ID") + " fueron modificados " + modificados + "\"\n\t}";
         } else {
-            retorno += "         \"ESTADO\":\"ERROR\",\n";
-            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas modificar\"\n      }";
+            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+            retorno += "\t\t\"DESCRIPCION_ERROR\":\"No existe el formulario que intentas modificar\"\n\t}";
         }
         return retorno;
     }
 
     public String modificarUsuario(Solicitud crearU) {
-        String retorno = "   <!ini_respuesta:\"MODIFICAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"MODIFICAR_USUARIO\">\n\t{\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < crearU.getCuantas().size(); j++) {
             Map<String, String> mapeado = crearU.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("USUARIO_ANTIGUO")) {
                     if (idsUs.isEmpty()) {
@@ -1709,14 +1748,14 @@ public class ControladorUsuario {
                             }
                         } else {
                             crearU.getCuantas().get(j).put("ERROR", "FALTAN");
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"Faltan alguno de los siguientes parametros obligatorios USUARIO_NUEVO, NUEVO_PASSWORD\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"Faltan alguno de los siguientes parametros obligatorios USUARIO_NUEVO, NUEVO_PASSWORD\"\n\t}";
                         }
                     } else {
                         if (idsUs.contains(mapeado.get("USUARIO_ANTIGUO"))) {
                             crearU.getCuantas().get(j).put("ERROR", "REPETIDO");
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"El usuario que se intenta modificar ya fue solicitado previamente en esta misma solicitud\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"El usuario que se intenta modificar ya fue solicitado previamente en esta misma solicitud\"\n\t}";
                         } else {
                             idsUs.add(mapeado.get("USUARIO_ANTIGUO"));
                             if (mapeado.containsKey("USUARIO_NUEVO") && mapeado.containsKey("CONTRA_NUEVA")) {
@@ -1727,15 +1766,15 @@ public class ControladorUsuario {
                                 }
                             } else {
                                 crearU.getCuantas().get(j).put("ERROR", "FALTAN");
-                                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                                retorno += "         \"DESCRIPCION_ERROR\":\"Faltan alguno de los siguientes parametros obligatorios USUARIO_NUEVO, NUEVO_PASSWORD\"\n      }";
+                                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Faltan alguno de los siguientes parametros obligatorios USUARIO_NUEVO, NUEVO_PASSWORD\"\n\t}";
                             }
                         }
                     }
                 } else {
                     crearU.getCuantas().get(j).put("ERROR", "FALTA");
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el parametro más importante (USUARIO_ANTIGUO)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el parametro más importante (USUARIO_ANTIGUO)\"\n\t}";
                 }
                 if ((j + 1) != crearU.getCuantas().size()) {
                     retorno += ",\n";
@@ -1743,14 +1782,14 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
         }
 
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1771,15 +1810,15 @@ public class ControladorUsuario {
                 usuariosDB.get(posicion).setUsuario(usuario_nuevo);
                 usuariosDB.get(posicion).setPassword(contra_nueva);
                 usuariosDB.get(posicion).setFecha_mod(fecha_modificacion);
-                retorno += "         \"ESTADO\":\"USUARIO MODIFICADO\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"USUARIO MODIFICADO\"\n\t}";
             } else {
                 if (posicion == -1) {
-                    retorno += "         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"El usuario que tratas de modificar no existe en la base de datos\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"El usuario que tratas de modificar no existe en la base de datos\"\n\t}";
                 } else {
                     if (posicion2 != -1) {
-                        retorno += "         \"ESTADO\":\"ERROR\",\n";
-                        retorno += "         \"DESCRIPCION_ERROR\":\"El nuevo usuario ya existe en la base de datos\"\n      }";
+                        retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                        retorno += "\t\t\"DESCRIPCION_ERROR\":\"El nuevo usuario ya existe en la base de datos\"\n\t}";
                     }
                 }
             }
@@ -1794,10 +1833,10 @@ public class ControladorUsuario {
                 usuariosDB.get(posicion).setUsuario(usuario_nuevo);
                 usuariosDB.get(posicion).setPassword(contra_nueva);
                 usuariosDB.get(posicion).setFecha_mod(fecha_modificacion);
-                retorno += "         \"ESTADO\":\"USUARIO MODIFICADO\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"USUARIO MODIFICADO\"\n\t}";
             } else {
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"El usuario que tratas de modificar no existe en la base de datos\"\n      }";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"El usuario que tratas de modificar no existe en la base de datos\"\n\t}";
             }
 
         }
@@ -1805,17 +1844,17 @@ public class ControladorUsuario {
     }
 
     public String eliminarFormulario(Solicitud eliminarForm) {
-        String retorno = "   <!ini_respuesta:\"ELIMINAR_FORMULARIO\">\n      {\"PARAMETROS_FORMULARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"ELIMINAR_FORMULARIO\">\n\t{\"PARAMETROS_FORMULARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < eliminarForm.getCuantas().size(); j++) {
             Map<String, String> mapeado = eliminarForm.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("ID")) {
                     if (idsUs.contains(mapeado.get("ID"))) {
-                        retorno += "         \"ESTADO\":\"ERROR\",\n";
-                        retorno += "         \"DESCRIPCION_ERROR\":\"Solicitud de eliminacion repetida\"\n      }";
+                        retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                        retorno += "\t\t\"DESCRIPCION_ERROR\":\"Solicitud de eliminacion repetida\"\n\t}";
                     } else {
                         idsUs.add(mapeado.get("ID"));
                         int posicion = -1;
@@ -1826,15 +1865,15 @@ public class ControladorUsuario {
                         }
                         if (posicion != -1) {
                             formsDB.remove(posicion);
-                            retorno += "         \"ESTADO\":\"FORMULARIO ELIMINADO\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"FORMULARIO ELIMINADO\"\n\t}";
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el formulario que intentas eliminar\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"No existe el formulario que intentas eliminar\"\n\t}";
                         }
                     }
                 } else {
-                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el parametro más importante (ID)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el parametro más importante (ID)\"\n\t}";
                 }
                 if ((j + 1) != eliminarForm.getCuantas().size()) {
                     retorno += ",\n";
@@ -1842,28 +1881,28 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
     public String eliminarUsuario(Solicitud crearU) {
-        String retorno = "   <!ini_respuesta:\"ELIMINAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"ELIMINAR_USUARIO\">\n\t{\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<String> idsUs = new ArrayList<>();
         for (int j = 0; j < crearU.getCuantas().size(); j++) {
             Map<String, String> mapeado = crearU.getCuantas().get(j);
             if (!mapeado.containsKey("ERROR")) {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviados(mapeado);
                 if (mapeado.containsKey("USUARIO")) {
                     if (idsUs.contains(mapeado.get("USUARIO"))) {
-                        retorno += "         \"ESTADO\":\"ERROR\",\n";
-                        retorno += "         \"DESCRIPCION_ERROR\":\"Solicitud de eliminacion repetida\"\n      }";
+                        retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                        retorno += "\t\t\"DESCRIPCION_ERROR\":\"Solicitud de eliminacion repetida\"\n\t}";
                     } else {
                         int posicion = -1;
                         for (int i = 0; i < usuariosDB.size(); i++) {
@@ -1873,15 +1912,15 @@ public class ControladorUsuario {
                         }
                         if (posicion != -1) {
                             usuariosDB.remove(posicion);
-                            retorno += "         \"ESTADO\":\"USUARIO ELIMINADO\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"USUARIO ELIMINADO\"\n\t}";
                         } else {
-                            retorno += "         \"ESTADO\":\"ERROR\",\n";
-                            retorno += "         \"DESCRIPCION_ERROR\":\"No existe el usuario que se intenta eliminar\"\n      }";
+                            retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                            retorno += "\t\t\"DESCRIPCION_ERROR\":\"No existe el usuario que se intenta eliminar\"\n\t}";
                         }
                     }
                 } else {
-                    retorno += "      {\n         \"ESTADO\":\"ERROR\",\n";
-                    retorno += "         \"DESCRIPCION_ERROR\":\"Falta el parametro más importante (USUARIO)\"\n      }";
+                    retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                    retorno += "\t\t\"DESCRIPCION_ERROR\":\"Falta el parametro más importante (USUARIO)\"\n\t}";
                 }
                 if ((j + 1) != crearU.getCuantas().size()) {
                     retorno += ",\n";
@@ -1889,13 +1928,13 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "      {\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
-                retorno += "         \"ESTADO\":\"ERROR\",\n";
-                retorno += "         \"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1949,24 +1988,24 @@ public class ControladorUsuario {
 
     public String mensaje(ArrayList<Usuario> ant) {
         String retorno = "";
-        String cT = "            ";
+        String cT = "\t\t";
         for (int i = 0; i < ant.size(); i++) {
             Usuario temp = ant.get(i);
             switch (temp.getFecha()) {
                 case "FALTA":
                     retorno += cT + "\"ESTADO\":\"ERROR\",\n";
-                    retorno += cT + "\"ERROR\":\"Hacen falta parametros importantes(USUARIO,PASSWORD)\"\n         }";
+                    retorno += cT + "\"ERROR\":\"Hacen falta parametros importantes(USUARIO,PASSWORD)\"\n\t}";
                     break;
                 case "REPETIDO":
                     retorno += cT + "\"ESTADO\":\"ERROR\",\n";
-                    retorno += cT + "\"DESCRIPCION_ERROR\":\"Este usuario ya fue solicitado para su creacion en esta misma solicitud\"\n         }";
+                    retorno += cT + "\"DESCRIPCION_ERROR\":\"Este usuario ya fue solicitado para su creacion en esta misma solicitud\"\n\t}";
                     break;
                 case "EXISTE":
                     retorno += cT + "\"ESTADO\":\"ERROR\",\n";
-                    retorno += cT + "\"DESCRIPCION_ERROR\":\"Este usuario ya existe en la base de datos\"\n         }";
+                    retorno += cT + "\"DESCRIPCION_ERROR\":\"Este usuario ya existe en la base de datos\"\n\t}";
                     break;
                 default:
-                    retorno += cT + "\"ESTADO\":\"USUARIO CREADO\"\n         }";
+                    retorno += cT + "\"ESTADO\":\"USUARIO CREADO\"\n\t}";
                     break;
             }
             if ((i + 1) != ant.size()) {
@@ -1986,13 +2025,13 @@ public class ControladorUsuario {
             for (int i = 0; i < usuariosDB.size(); i++) {
                 Usuario temp = usuariosDB.get(i);
                 out.println("\t{");
-                out.println("\t\t\"USUARIO\":\"" + temp.getUsuario() + "\",");
-                out.println("\t\t\"PASSWORD\":\"" + temp.getPassword() + "\",");
+                out.println("\t\"USUARIO\":\"" + temp.getUsuario() + "\",");
+                out.println("\t\"PASSWORD\":\"" + temp.getPassword() + "\",");
                 if (temp.getFecha_mod().isEmpty()) {
-                    out.println("\t\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\"");
+                    out.println("\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\"");
                 } else {
-                    out.println("\t\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\",");
-                    out.println("\t\t\"FECHA_MODIFICACION\":\"" + temp.getFecha_mod() + "\"");
+                    out.println("\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\",");
+                    out.println("\t\"FECHA_MODIFICACION\":\"" + temp.getFecha_mod() + "\"");
                 }
                 if (i + 1 != usuariosDB.size()) {
                     out.println("\t},");
@@ -2014,34 +2053,34 @@ public class ControladorUsuario {
             for (int i = 0; i < formsDB.size(); i++) {
                 Formulario temp = formsDB.get(i);
                 out.println("\t{");
-                out.println("\t\t\"ID_FORM\":\"" + temp.getId() + "\",");
-                out.println("\t\t\"TITULO\":\"" + temp.getTitulo() + "\",");
-                out.println("\t\t\"NOMBRE\":\"" + temp.getNombre() + "\",");
-                out.println("\t\t\"TEMA\":\"" + temp.getTema() + "\",");
-                out.println("\t\t\"USUARIO_CREACION\":\"" + temp.getUsuario() + "\",");
-                out.println("\t\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\",");
+                out.println("\t\"ID_FORM\":\"" + temp.getId() + "\",");
+                out.println("\t\"TITULO\":\"" + temp.getTitulo() + "\",");
+                out.println("\t\"NOMBRE\":\"" + temp.getNombre() + "\",");
+                out.println("\t\"TEMA\":\"" + temp.getTema() + "\",");
+                out.println("\t\"USUARIO_CREACION\":\"" + temp.getUsuario() + "\",");
+                out.println("\t\"FECHA_CREACION\":\"" + temp.getFecha() + "\",");
                 if (!formsDB.get(i).getComponentes().isEmpty()) {
-                    out.println("\t\t\"COMPONENTES\":(");
+                    out.println("\t\"COMPONENTES\":(");
                     ArrayList<Componente> comps = formsDB.get(i).getComponentes();
                     int conteo = 0;
                     for (Componente compt : comps) {
                         String posibles = "";
-                        out.println("\t\t{");
-                        out.println("\t\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
+                        out.println("\t{");
+                        out.println("\t\t\"ID_COMP\":\"" + compt.getId() + "\",");
                         if (!compt.getNombre_campo().isEmpty()) {
-                            out.println("\t\t\t\"NOMBRE_CAMPO\":\"" + compt.getNombre_campo() + "\",");
+                            out.println("\t\t\"NOMBRE_CAMPO\":\"" + compt.getNombre_campo() + "\",");
                         }
-                        out.println("\t\t\t\"CLASE\":\"" + compt.getClase() + "\",");
-                        out.println("\t\t\t\"TEXTO_VISIBLE\":\"" + compt.getTexto_visible() + "\",");
-                        posibles += "\t\t\t\"INDICE\":\"" + (conteo + 1) + "\",\n";
+                        out.println("\t\t\"CLASE\":\"" + compt.getClase() + "\",");
+                        out.println("\t\t\"TEXTO_VISIBLE\":\"" + compt.getTexto_visible() + "\",");
+                        posibles += "\t\t\"INDICE\":\"" + (conteo + 1) + "\",\n";
                         if (!compt.getAlineacion().isEmpty()) {
-                            posibles += "\t\t\t\"ALINEACION\":\"" + compt.getAlineacion() + "\",\n";
+                            posibles += "\t\t\"ALINEACION\":\"" + compt.getAlineacion() + "\",\n";
                         }
                         if (!compt.getRequerido().isEmpty()) {
-                            posibles += "\t\t\t\"REQUERIDO\":\"" + compt.getRequerido() + "\",\n";
+                            posibles += "\t\t\"REQUERIDO\":\"" + compt.getRequerido() + "\",\n";
                         }
                         if (!compt.getOpciones().isEmpty()) {
-                            posibles += "\t\t\t\"OPCIONES\" : \"";
+                            posibles += "\t\t\"OPCIONES\" : \"";
                             for (int j = 0; j < compt.getOpciones().size(); j++) {
                                 posibles += compt.getOpciones().get(j);
                                 if ((j + 1) != compt.getOpciones().size()) {
@@ -2051,25 +2090,25 @@ public class ControladorUsuario {
                             posibles += "\",\n";
                         }
                         if (compt.getFilas() != -1) {
-                            posibles += "\t\t\t\"FILAS\":\"" + compt.getFilas() + "\",\n";
+                            posibles += "\t\t\"FILAS\":\"" + compt.getFilas() + "\",\n";
                         }
                         if (compt.getColumnas() != -1) {
-                            posibles += "\t\t\t\"COLUMNAS\":\"" + compt.getColumnas() + "\",\n";
+                            posibles += "\t\t\"COLUMNAS\":\"" + compt.getColumnas() + "\",\n";
                         }
                         if (!compt.getUrl().isEmpty()) {
-                            posibles += "\t\t\t\"URL\":\"" + compt.getUrl() + "\",\n";
+                            posibles += "\t\t\"URL\":\"" + compt.getUrl() + "\",\n";
                         }
                         out.println(posibles.substring(0, posibles.length() - 2));
                         if ((conteo + 1) == comps.size()) {
-                            out.println("\t\t}");
+                            out.println("\t}");
                         } else {
-                            out.println("\t\t},");
+                            out.println("\t},");
                         }
                         conteo++;
                     }
-                    out.println("\t\t)");
+                    out.println("\t)");
                 } else {
-                    out.println("\t\t\"COMPONENTES\":()");
+                    out.println("\t\"COMPONENTES\":()");
                 }
                 if (i + 1 != formsDB.size()) {
                     out.println("\t},");
@@ -2084,27 +2123,41 @@ public class ControladorUsuario {
     }
 
     public String obtenerParametrosEnviados(Map<String, String> mapeado) {
-        String ingresados = "         \"PARAMETROS_ENVIADOS\":\n                 {\n";
+        String ingresados = "\t\t\"PARAMETROS_ENVIADOS\":\n\t\t{\n";
         ArrayList<String> llaves = new ArrayList<>();
         ArrayList<String> valores = new ArrayList<>();
         for (Map.Entry<String, String> entry : mapeado.entrySet()) {
-            llaves.add(entry.getKey());
-            valores.add(entry.getValue());
+            if (entry.getKey().equals("OPCIONES")) {
+                llaves.add(entry.getKey());
+                String[] po = entry.getValue().split("\n");
+                String opci = "";
+                for (int j = 0; j < po.length; j++) {
+                    opci += po[j];
+                    if ((j + 1) != po.length) {
+                        opci += "|";
+                    }
+                }
+                System.out.println(opci);
+                valores.add(opci);
+            } else {
+                llaves.add(entry.getKey());
+                valores.add(entry.getValue());
+            }
         }
         for (int i = (llaves.size() - 1); i >= 0; i--) {
-            ingresados += "            \t\"" + llaves.get(i) + "\": \"" + valores.get(i) + "\"";
+            ingresados += "\t\t\t\"" + llaves.get(i) + "\": \"" + valores.get(i) + "\"";
             if (i == 0) {
                 ingresados += "\n";
             } else {
                 ingresados += ",\n";
             }
         }
-        ingresados += "                 },\n";
+        ingresados += "\t\t},\n";
         return ingresados;
     }
 
     public String obtenerParametrosEnviadosConRepetidos(Map<String, String> mapeado) {
-        String ingresados = "         \"PARAMETROS_ENVIADOS\":\n                 {\n";
+        String ingresados = "\t\t\"PARAMETROS_ENVIADOS\":\n                 {\n";
         ArrayList<String> llaves = new ArrayList<>();
         ArrayList<String> valores = new ArrayList<>();
         for (Map.Entry<String, String> entry : mapeado.entrySet()) {
@@ -2119,7 +2172,16 @@ public class ControladorUsuario {
                     for (int i = 0; i < partes.length; i++) {
                         if (entry.getKey().equals("OPCIONES")) {
                             llaves.add(entry.getKey() + "-REPETIDO");
-                            valores.add(partes[i].replace('\n', '|'));
+                            String[] po = partes[i].split("\n");
+                            String opci = "";
+                            for (int j = 0; j < po.length; j++) {
+                                opci += po[j];
+                                if ((j + 1) != po.length) {
+                                    opci += "|";
+                                }
+                            }
+                            System.out.println(opci);
+                            valores.add(opci);
                         } else {
                             llaves.add(entry.getKey() + "-REPETIDO");
                             valores.add(partes[i]);
@@ -2128,7 +2190,16 @@ public class ControladorUsuario {
                 } else {
                     if (entry.getKey().equals("OPCIONES")) {
                         llaves.add(entry.getKey());
-                        valores.add(entry.getValue().replace('\n', '|'));
+                        String[] po = entry.getValue().split("\n");
+                        String opci = "";
+                        for (int j = 0; j < po.length; j++) {
+                            opci += po[j];
+                            if ((j + 1) != po.length) {
+                                opci += "|";
+                            }
+                        }
+                        System.out.println(opci);
+                        valores.add(opci);
                     } else {
                         llaves.add(entry.getKey());
                         valores.add(entry.getValue());
@@ -2137,14 +2208,14 @@ public class ControladorUsuario {
             }
         }
         for (int i = (llaves.size() - 1); i >= 0; i--) {
-            ingresados += "            \t\"" + llaves.get(i) + "\": \"" + valores.get(i) + "\"";
+            ingresados += "\t\t\t\"" + llaves.get(i) + "\": \"" + valores.get(i) + "\"";
             if (i == 0) {
                 ingresados += "\n";
             } else {
                 ingresados += ",\n";
             }
         }
-        ingresados += "                 },\n";
+        ingresados += "\t\t},\n";
         return ingresados;
     }
 

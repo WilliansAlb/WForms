@@ -409,7 +409,7 @@ public class ControladorFormulario {
                             }
                             out.println("\t\t\t\"CLASE\":\"" + compt.getClase() + "\",");
                             out.println("\t\t\t\"TEXTO_VISIBLE\":\"" + compt.getTexto_visible() + "\",");
-                            posibles += "\t\t\t\"INDICE\":\"" + (conteo) + "\",\n";
+                            posibles += "\t\t\t\"INDICE\":\"" + (conteo+1) + "\",\n";
                             if (!compt.getAlineacion().isEmpty()) {
                                 posibles += "\t\t\t\"ALINEACION\":\"" + compt.getAlineacion() + "\",\n";
                             }
@@ -447,7 +447,7 @@ public class ControladorFormulario {
                     } else {
                         out.println("\t\t\"COMPONENTES\":()");
                     }
-                    out.println("\t\t}");
+                    out.println("\t}");
                 }
             }
             out.print(")");

@@ -49,7 +49,7 @@ public class Creacion extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Creacion</title>");            
+            out.println("<title>Servlet Creacion</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Creacion at " + request.getContextPath() + "</h1>");
@@ -89,31 +89,42 @@ public class Creacion extends HttpServlet {
         String parametro2 = request.getParameter("usuario");
         ControladorUsuario control = new ControladorUsuario();
         String pruebaFunciona = "";
-        Map<String,String> respuestas = new HashMap<>();
-        if (parametro2!=null){
-            if (!parametro2.isEmpty()){
-                pruebaFunciona = control.analizarSolicitudes(parametro,parametro2);
-                respuestas.put("usuario", parametro2);
-                respuestas.put("respuesta", pruebaFunciona);
-                respuestas.put("reportes", control.consultades);
+        Map<String, String> respuestas = new HashMap<>();
+        if (parametro2 != null) {
+            if (!parametro2.isEmpty()) {
+                pruebaFunciona = control.analizarSolicitudes(parametro, parametro2);
+                if (control.tieneError) {
+                    respuestas.put("errores", control.errorades);
+                } else {
+                    respuestas.put("usuario", parametro2);
+                    respuestas.put("respuesta", pruebaFunciona);
+                    if (!control.consultades.isEmpty()) {
+                        respuestas.put("reportes", control.consultades);
+                    }
+                }
             } else {
                 pruebaFunciona = control.analizarSolicitudes(parametro);
-                if (control.getUsuarioActual().isEmpty()){
-                    respuestas.put("ERROR", pruebaFunciona);
+                if (control.tieneError) {
+                    respuestas.put("errores", control.errorades);
                 } else {
-                    respuestas.put("usuario", control.getUsuarioActual());
-                    respuestas.put("respuesta", pruebaFunciona);
+                    if (control.getUsuarioActual().isEmpty()) {
+                        respuestas.put("ERROR", pruebaFunciona);
+                    } else {
+                        respuestas.put("usuario", control.getUsuarioActual());
+                        respuestas.put("respuesta", pruebaFunciona);
+                        if (!control.consultades.isEmpty()) {
+                            respuestas.put("reportes", control.consultades);
+                        }
+                    }
                 }
             }
         }
-        //respuestas.put("respuesta",control.dePrueba(parametro, "ozymandias"));
+        //respuestas.put("respuesta", control.dePrueba(parametro, "ozymandias"));
         //control.listado_datos();
-        //respuestas.put("respuesta","culo");
-        respuestas.put("usuario", "ozymandias");
         String jsonString = new Gson().toJson(respuestas);
         response.getWriter().write(jsonString);
     }
-    
+
     /**
      * Returns a short description of the servlet.
      *

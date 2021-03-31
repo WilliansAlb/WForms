@@ -1,129 +1,139 @@
 db.formularios(
 	{
-		"ID_FORM":"$form1",
-		"TITULO":"Formulario Modificado para encuesta 1",
-		"NOMBRE":"formulario_encuesta_1_v2",
-		"TEMA":"Blue",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-26",
-		"COMPONENTES":(
-		{
-			"ID_COMP":"$_text_cliente",
-			"NOMBRE_CAMPO":"Cliente",
-			"CLASE":"CAMPO_TEXTO",
-			"TEXTO_VISIBLE":"Nombre de cliente:",
-			"INDICE":"1",
-			"ALINEACION":"CENTRO",
-			"REQUERIDO":"SI"
-		},
-		{
-			"ID_COMP":"$_grupo_paises",
-			"NOMBRE_CAMPO":"Pais",
-			"CLASE":"CHECKBOX",
-			"TEXTO_VISIBLE":"Pais de Origen:",
-			"INDICE":"2",
-			"ALINEACION":"DERECHA",
-			"REQUERIDO":"SI",
-			"OPCIONES" : "Guatemala|Costa Rica|Honduras|OTRO"
-		},
-		{
-			"ID_COMP":"$_comediantes",
-			"NOMBRE_CAMPO":"formulario_comediantes",
-			"CLASE":"RADIO",
-			"TEXTO_VISIBLE":"Los mejores comediantes",
-			"INDICE":"3",
-			"ALINEACION":"DERECHA",
-			"REQUERIDO":"NO",
-			"OPCIONES" : "Ibrahim Salem|Camilo Diaz|Camilo Sanchez|Otro"
-		},
-		{
-			"ID_COMP":"$_profesores",
-			"NOMBRE_CAMPO":"Profesores",
-			"CLASE":"COMBO",
-			"TEXTO_VISIBLE":"Profesores excelentes:",
-			"INDICE":"4",
-			"ALINEACION":"CENTRO",
-			"REQUERIDO":"SI",
-			"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
-		},
-		{
-			"ID_COMP":"$_boton_submit1",
-			"CLASE":"BOTON",
-			"TEXTO_VISIBLE":"SUBMIT",
-			"INDICE":"5"
-		}
-		)
+	"ID_FORM":"$form1",
+	"TITULO":"Formulario Modificado para encuesta 1",
+	"NOMBRE":"formulario_encuesta_1_v2",
+	"TEMA":"Blue",
+	"USUARIO_CREACION":"ozymandias",
+	"FECHA_CREACION":"2021-03-26",
+	"COMPONENTES":(
+	{
+		"ID_COMP":"$_text_cliente",
+		"NOMBRE_CAMPO":"Cliente",
+		"CLASE":"CAMPO_TEXTO",
+		"TEXTO_VISIBLE":"Nombre de cliente:",
+		"INDICE":"1",
+		"ALINEACION":"CENTRO",
+		"REQUERIDO":"SI"
 	},
 	{
-		"ID_FORM":"$form2",
-		"TITULO":"Formulario para encuesta: 1",
-		"NOMBRE":"formulario_encuesta_1",
-		"TEMA":"Dark",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-26",
-		"COMPONENTES":(
-		{
-			"ID_COMP":"$_grupo_paises5",
-			"NOMBRE_CAMPO":"Pais",
-			"CLASE":"COMBO",
-			"TEXTO_VISIBLE":"Pais de Origen:",
-			"INDICE":"1",
-			"ALINEACION":"CENTRO",
-			"REQUERIDO":"SI",
-			"OPCIONES" : "Guatemala: City|El Salvador|Honduras|OTRO"
-		}
-		)
+		"ID_COMP":"$_grupo_paises",
+		"NOMBRE_CAMPO":"Pais",
+		"CLASE":"CHECKBOX",
+		"TEXTO_VISIBLE":"Pais de Origen:",
+		"INDICE":"2",
+		"ALINEACION":"DERECHA",
+		"REQUERIDO":"SI",
+		"OPCIONES" : "Guatemala|Costa Rica|Honduras|OTRO"
 	},
 	{
-		"ID_FORM":"$form3",
-		"TITULO":"Formulario para encuesta: 1",
-		"NOMBRE":"formulario_encuesta_1",
-		"TEMA":"White",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-26",
-		"COMPONENTES":(
-		{
-			"ID_COMP":"$_boton_submit",
-			"CLASE":"BOTON",
-			"TEXTO_VISIBLE":"SUBMIT",
-			"INDICE":"1"
-		}
-		)
+		"ID_COMP":"$_comediantes",
+		"NOMBRE_CAMPO":"formulario_comediantes",
+		"CLASE":"RADIO",
+		"TEXTO_VISIBLE":"Los mejores comediantes",
+		"INDICE":"3",
+		"ALINEACION":"DERECHA",
+		"REQUERIDO":"NO",
+		"OPCIONES" : "Ibrahim Salem|Camilo Diaz|Camilo Sanchez|Otro"
 	},
 	{
-		"ID_FORM":"$formularioDiaDeLasMadres",
-		"TITULO":"Opiniones acerca de la festividad",
-		"NOMBRE":"form_madre",
-		"TEMA":"White",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-26",
-		"COMPONENTES":()
+		"ID_COMP":"$_profesores",
+		"NOMBRE_CAMPO":"Profesores",
+		"CLASE":"COMBO",
+		"TEXTO_VISIBLE":"Profesores excelentes:",
+		"INDICE":"4",
+		"ALINEACION":"CENTRO",
+		"REQUERIDO":"SI",
+		"OPCIONES" : "Guatemala|El Salvador|Honduras|OTRO"
 	},
 	{
-		"ID_FORM":"$formBurnout",
-		"TITULO":"Preguntas acerca de Burnout 3",
-		"NOMBRE":"formulario_burnout_3",
-		"TEMA":"Dark",
-		"USUARIO_CREACION":"yelbetto",
-		"FECHA_CREACION":"2021-03-27",
-		"COMPONENTES":()
+		"ID_COMP":"$_boton_submit1",
+		"CLASE":"BOTON",
+		"TEXTO_VISIBLE":"SUBMIT",
+		"INDICE":"5"
+	}
+	)
 	},
 	{
-		"ID_FORM":"$formIglesia",
-		"TITULO":"Formulario para encuesta de semana santa",
-		"NOMBRE":"formulario_semana_santa",
-		"TEMA":"White",
-		"USUARIO_CREACION":"monicaAyala",
-		"FECHA_CREACION":"2021-03-27",
-		"COMPONENTES":()
+	"ID_FORM":"$form2",
+	"TITULO":"Formulario para encuesta: 1",
+	"NOMBRE":"formulario_encuesta_1",
+	"TEMA":"Dark",
+	"USUARIO_CREACION":"ozymandias",
+	"FECHA_CREACION":"2021-03-26",
+	"COMPONENTES":(
+	{
+		"ID_COMP":"$_grupo_paises5",
+		"NOMBRE_CAMPO":"Pais",
+		"CLASE":"COMBO",
+		"TEXTO_VISIBLE":"Pais de Origen:",
+		"INDICE":"1",
+		"ALINEACION":"CENTRO",
+		"REQUERIDO":"SI",
+		"OPCIONES" : "Guatemala: City|El Salvador|Honduras|OTRO"
+	}
+	)
 	},
 	{
-		"ID_FORM":"$formularioCanchlas",
-		"TITULO":"Formulario para chanclas 1",
-		"NOMBRE":"formulario_chanclas_1",
-		"TEMA":"White",
-		"USUARIO_CREACION":"ozymandias",
-		"FECHA_CREACION":"2021-03-28",
-		"COMPONENTES":()
+	"ID_FORM":"$form3",
+	"TITULO":"Formulario para encuesta: 1",
+	"NOMBRE":"formulario_encuesta_1",
+	"TEMA":"White",
+	"USUARIO_CREACION":"ozymandias",
+	"FECHA_CREACION":"2021-03-26",
+	"COMPONENTES":(
+	{
+		"ID_COMP":"$_boton_submit",
+		"CLASE":"BOTON",
+		"TEXTO_VISIBLE":"SUBMIT",
+		"INDICE":"1"
+	}
+	)
+	},
+	{
+	"ID_FORM":"$formBurnout",
+	"TITULO":"Preguntas acerca de Burnout 3",
+	"NOMBRE":"formulario_burnout_3",
+	"TEMA":"Dark",
+	"USUARIO_CREACION":"yelbetto",
+	"FECHA_CREACION":"2021-03-27",
+	"COMPONENTES":()
+	},
+	{
+	"ID_FORM":"$formIglesia",
+	"TITULO":"Formulario para encuesta de semana santa",
+	"NOMBRE":"formulario_semana_santa",
+	"TEMA":"White",
+	"USUARIO_CREACION":"monicaAyala",
+	"FECHA_CREACION":"2021-03-27",
+	"COMPONENTES":()
+	},
+	{
+	"ID_FORM":"$formularioCanchlas",
+	"TITULO":"Formulario para chanclas 1",
+	"NOMBRE":"formulario_chanclas_1",
+	"TEMA":"White",
+	"USUARIO_CREACION":"ozymandias",
+	"FECHA_CREACION":"2021-03-28",
+	"COMPONENTES":()
+	},
+	{
+	"ID_FORM":"$form5",
+	"TITULO":"Formulario Modificado para encuesta 1",
+	"NOMBRE":"formulario_encuesta_1_v2",
+	"TEMA":"Dark",
+	"USUARIO_CREACION":"ozymandias",
+	"FECHA_CREACION":"2021-03-31",
+	"COMPONENTES":(
+	{
+		"ID_COMP":"$_text_cliente",
+		"NOMBRE_CAMPO":"Cliente",
+		"CLASE":"CAMPO_TEXTO",
+		"TEXTO_VISIBLE":"Nombre de cliente:",
+		"INDICE":"1",
+		"ALINEACION":"CENTRO",
+		"REQUERIDO":"SI"
+	}
+	)
 	}
 )
