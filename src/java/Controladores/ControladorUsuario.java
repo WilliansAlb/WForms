@@ -988,7 +988,7 @@ public class ControladorUsuario {
         if (posicion == -1) {
             Usuario temp = new Usuario(usuario, contra, fecha_creacion);
             usuariosDB.add(temp);
-            retorno += "\t\t\"ESTADO\":\"USUARIO MODIFICADO\"\n\t}";
+            retorno += "\t\t\"ESTADO\":\"USUARIO CREADO\"\n\t}";
         } else {
             retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
             retorno += "\t\t\"DESCRIPCION_ERROR\":\"El usuario que tratas de crear ya existe en la base de datos\"\n\t}";

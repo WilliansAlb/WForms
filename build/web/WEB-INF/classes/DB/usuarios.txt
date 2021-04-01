@@ -58,5 +58,10 @@ db.usuarios(
 	"USUARIO":"BennyIbarra",
 	"PASSWORD":"12345678",
 	"FECHA_CREACION":"2021-03-31"
+	},
+	{
+	"USUARIO":"josemaria",
+	"PASSWORD":"12345678",
+	"FECHA_CREACION":"2021-04-01"
 	}
 )
