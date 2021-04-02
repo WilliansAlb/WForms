@@ -135,5 +135,14 @@ db.formularios(
 		"REQUERIDO":"SI"
 	}
 	)
+	},
+	{
+	"ID_FORM":"$form10",
+	"TITULO":"Formulario para encuesta 1",
+	"NOMBRE":"formulario_encuesta_1",
+	"TEMA":"Dark",
+	"USUARIO_CREACION":"ozymandias",
+	"FECHA_CREACION":"2021-04-01",
+	"COMPONENTES":()
 	}
 )

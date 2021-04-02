@@ -6,14 +6,11 @@
 package Servlet;
 
 import Controladores.ControladorFormulario;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
+import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author willi
  */
-@WebServlet(name = "Descargar", urlPatterns = {"/Descargar"})
-public class Descargar extends HttpServlet {
+@WebServlet(name = "Importar", urlPatterns = {"/Importar"})
+public class Importar extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +41,10 @@ public class Descargar extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Descargar</title>");
+            out.println("<title>Servlet Importar</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Descargar at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Importar at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,19 +62,7 @@ public class Descargar extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ControladorFormulario escribir = new ControladorFormulario();
-        String id = request.getParameter("id");
-        if (id!=null){
-            escribir.escribirParaDescarga(id);
-            File file = new File("formulario.form");
-            byte[] b = Files.readAllBytes(file.toPath());
-            InputStream bos = new ByteArrayInputStream(b);
-            int tamanoInput = bos.available();
-            byte[] datosPDF = new byte[tamanoInput];
-            bos.read(datosPDF, 0, tamanoInput);
-            response.getOutputStream().write(datosPDF);
-            bos.close();
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -91,7 +76,14 @@ public class Descargar extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json");
+        String parametro = request.getParameter("entrada");
+        ControladorFormulario formu = new ControladorFormulario();
+        Map<String, String> respuestas = new HashMap<>();
+        String re = formu.cargar_archivo(parametro);
+        respuestas.put("respuesta", re);
+        String jsonString = new Gson().toJson(respuestas);
+        response.getWriter().write(jsonString);
     }
 
     /**

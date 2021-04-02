@@ -57,7 +57,7 @@ public class Ver extends HttpServlet {
 "            <div>\n" +
 "                <article id=\"title\"><span class=\"parent\">"+actual.getId()+"</span><br /><span class=\"name\">WF<a style=\"display:contents;text-decoration: none;color:#84d404;\" href=\"/WForms\"><img src=\"img/forms.svg\" style=\"width: 25px;height: 25px;\"></a>RMS</span>\n" +
 "                </article>\n" +
-"                <article id=\"reference\"><div class=\"cerrar\"><a href=\"http://localhost:8080/WForms/Login?logout=si\" style=\"display:contents;text-decoration: none;\"><img src=\"img/salir.svg\" style=\"width: 25px;height: 25px;\"><span style=\"font-size:12px;\">CERRAR SESION</span></a></div></article>\n" +
+"                <article id=\"reference\"><div class=\"cerrar\"><a href=\"http://localhost:80/WForms/Login?logout=si\" style=\"display:contents;text-decoration: none;\"><img src=\"img/salir.svg\" style=\"width: 25px;height: 25px;\"><span style=\"font-size:12px;\">CERRAR SESION</span></a></div></article>\n" +
 "            </div>\n" +
 "        </header>");
             out.println("<div class=\"paraGrid\">");

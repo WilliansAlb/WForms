@@ -80,7 +80,7 @@
             };
         </script>
         <%} else {
-                response.sendRedirect("http://localhost:8080/WForms/forms.jsp");
+                response.sendRedirect("http://localhost:80/WForms/forms.jsp");
             }%>
     </body>
 </html>

@@ -24,6 +24,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +54,7 @@ public class ControladorUsuario {
     public boolean tieneError = false;
     Map<String, ArrayList<String>> mapa = new HashMap<>();
     private String usuarioActual;
+    private boolean sesion_iniciada = false;
 
     public ControladorUsuario() {
         usuarioActual = "";
@@ -99,6 +103,9 @@ public class ControladorUsuario {
                             break;
                         case "CONSULTAR_DATOS":
                             retorno += realizarConsultas(temp);
+                            break;
+                        case "LOGIN":
+                            retorno += login(temp);
                             break;
                         default:
                             break;
@@ -686,6 +693,24 @@ public class ControladorUsuario {
         return retorno;
     }
 
+    public String login(Solicitud loginU) {
+        String retorno = "<!ini_respuesta:\"LOGIN\">\n\t{\"CREDENCIALES_USUARIO\":[\n";
+        for (int j = 0; j < loginU.getCuantas().size(); j++) {
+            Map<String, String> mapeado = loginU.getCuantas().get(j);
+            retorno += "\t\t{\"PARAMETROS_ENVIADOS\":[\n";
+            retorno += "\t\t\t\"USUARIO\":\"" + mapeado.get("USUARIO") + "\",\n";
+            retorno += "\t\t\t\"PASSWORD\":\"" + mapeado.get("CONTRA") + "\"\n";
+            retorno += "\t\t]},\n";
+            if (sesion_iniciada) {
+                retorno += "\t\t\"ESTADO\":\"SESIÓN INICIADA\"\n";
+            } else {
+                retorno += "\t\t\"ESTADO\":\"Ya has iniciado sesión antes, cierra la sesión y vuelve a intentarlo\"\n";
+            }
+        }
+        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        return retorno;
+    }
+
     /**
      *
      * @param campos Los campos que solicita el usuario
@@ -786,7 +811,7 @@ public class ControladorUsuario {
                             }
                         }
                         if (conteo > 1) {
-                            retorno += "Mandas la solicitud más de un login, solo se permite que hagas una";
+                            retorno += "Mandas una solicitud de login mas de una vez, solo se acepta una vez";
                         } else {
                             Map<String, String> usuario = halla.get(0).getCuantas().get(0);
                             boolean existe = false;
@@ -799,11 +824,20 @@ public class ControladorUsuario {
                             }
                             if (existe) {
                                 setUsuarioActual(usuario.get("USUARIO"));
+                                sesion_iniciada = true;
                                 retorno += analizarSolicitudes(texto, getUsuarioActual());
                             } else {
-                                retorno += "Las credenciales que ingresaste no corresponden a ningún usuario";
+                                if (usuario.get("USUARIO").equals("admin") && usuario.get("CONTRA").equals("123")) {
+                                    setUsuarioActual(usuario.get("USUARIO"));
+                                    sesion_iniciada = true;
+                                    retorno += analizarSolicitudes(texto, getUsuarioActual());
+                                } else {
+                                    retorno += "Las credenciales que ingresaste no corresponden a ningún usuario";
+                                }
                             }
                         }
+                    } else {
+                        retorno += "Tienes que mandar una solicitud de login como primera solicitud cuando aun no te has logeado";
                     }
                 } else {
                     retorno += "Sin mandar nada";
@@ -835,47 +869,67 @@ public class ControladorUsuario {
     }
 
     public ArrayList<Usuario> listado_usuarios() throws FileNotFoundException {
-        String rutaArchivos = "C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/usuarios.txt";
-        File nuevo = new File(rutaArchivos);
-        parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
-        ArrayList<Usuario> halla = new ArrayList<>();
-        try {
-            par.parse();
-            halla = par.listado_usuarios;
-        } catch (Exception ex) {
-            System.out.println("Error por: " + ex.toString());
+        Path rutaSym = Paths.get("usuarios.txt");
+        if (Files.exists(rutaSym)) {
+            String rutaArchivos = "usuarios.txt";
+            File nuevo = new File(rutaArchivos);
+            parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
+            ArrayList<Usuario> halla = new ArrayList<>();
+            try {
+                par.parse();
+                halla = par.listado_usuarios;
+            } catch (Exception ex) {
+                System.out.println("Error por: " + ex.toString());
+            }
+            return halla;
+        } else {
+            Usuario administrador = new Usuario();
+            administrador.setUsuario("admin");
+            administrador.setPassword("123");
+            administrador.setFecha("1998-07-21");
+            ArrayList<Usuario> uste = new ArrayList<>();
+            uste.add(administrador);
+            return uste;
         }
-        return halla;
     }
 
     public ArrayList<Formulario> listado_formularios() throws FileNotFoundException {
-        String rutaArchivos = "C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/formularios.txt";
-        File nuevo = new File(rutaArchivos);
-        parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
-        ArrayList<Formulario> halla = new ArrayList<>();
-        try {
-            par.parse();
-            halla = par.listado_formularios;
-        } catch (Exception ex) {
-            System.out.println("Error por: " + ex.toString());
+        Path rutaSym = Paths.get("formularios.txt");
+        if (Files.exists(rutaSym)) {
+            File nuevo = new File("formularios.txt");
+            parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
+            ArrayList<Formulario> halla = new ArrayList<>();
+            try {
+                par.parse();
+                halla = par.listado_formularios;
+            } catch (Exception ex) {
+                System.out.println("Error por: " + ex.toString());
+            }
+            return halla;
+        } else {
+            return new ArrayList<>();
         }
-        return halla;
     }
 
     public void listado_datos() throws FileNotFoundException {
-        String rutaArchivos = "C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/datos.txt";
-        File nuevo = new File(rutaArchivos);
-        parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
-        try {
-            par.parse();
-            datosDB = par.listado_datos;
-        } catch (Exception ex) {
-            System.out.println("Error por: " + ex.toString());
+        Path rutaSym = Paths.get("datos.txt");
+        if (Files.exists(rutaSym)) {
+            String rutaArchivos = "datos.txt";
+            File nuevo = new File(rutaArchivos);
+            parserALM par = new parserALM(new LexerALM(new FileReader(nuevo)));
+            try {
+                par.parse();
+                datosDB = par.listado_datos;
+            } catch (Exception ex) {
+                System.out.println("Error por: " + ex.toString());
+            }
+        } else {
+            datosDB = new ArrayList<>();
         }
     }
 
     public String crearUsuario(Solicitud crearU) {
-        String retorno = "   <!ini_respuesta:\"CREAR_USUARIO\">\n      {\"CREDENCIALES_USUARIO\":[\n";
+        String retorno = "<!ini_respuesta:\"CREAR_USUARIO\">\n\t{\"CREDENCIALES_USUARIO\":[\n";
         ArrayList<Usuario> usuarios = new ArrayList<>();
         if (!crearU.isTieneErrores()) {
             for (int j = 0; j < crearU.getCuantas().size(); j++) {
@@ -914,7 +968,7 @@ public class ControladorUsuario {
         } else {
             retorno += crearU.getDescripcion_error() + "\n";
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t]\n\t}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1572,7 +1626,7 @@ public class ControladorUsuario {
                             }
                             formsDB.get(pos).setComponentes(temporal);
                         }
-                        retorno += "\t\t\"NOTA\":\"Fue cambiado el indice del componente de " + pos_comp + " a " + indice + "\",\n";
+                        retorno += "\t\t\"NOTA\":\"Fue cambiado el indice del componente de " + (pos_comp + 1) + " a " + (indice + 1) + "\",\n";
                     } else {
                         retorno += "\t\t\"NOTA\":\"No se modifico el indice, dado que mandaste el mismo que tenia\",\n";
                     }
@@ -2018,7 +2072,7 @@ public class ControladorUsuario {
     }
 
     public void actualizarUsuarios() {
-        try (FileWriter fw = new FileWriter("C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/usuarios.txt", false);
+        try (FileWriter fw = new FileWriter("usuarios.txt", false);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter out = new PrintWriter(bw)) {
             out.println("db.usuarios(");
@@ -2046,7 +2100,7 @@ public class ControladorUsuario {
     }
 
     public void actualizarFormularios() {
-        try (FileWriter fw = new FileWriter("C:/Users/willi/OneDrive/Documentos/NetBeansProjects/WForms/src/java/DB/formularios.txt", false);
+        try (FileWriter fw = new FileWriter("formularios.txt", false);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter out = new PrintWriter(bw)) {
             out.println("db.formularios(");
@@ -2157,7 +2211,7 @@ public class ControladorUsuario {
     }
 
     public String obtenerParametrosEnviadosConRepetidos(Map<String, String> mapeado) {
-        String ingresados = "\t\t\"PARAMETROS_ENVIADOS\":\n                 {\n";
+        String ingresados = "\t\t\"PARAMETROS_ENVIADOS\":\n\t\t{\n";
         ArrayList<String> llaves = new ArrayList<>();
         ArrayList<String> valores = new ArrayList<>();
         for (Map.Entry<String, String> entry : mapeado.entrySet()) {

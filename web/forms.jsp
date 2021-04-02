@@ -30,7 +30,7 @@
                 <article id="title"><span class="parent">tus formularios</span><br /><span class="name">WF<a href="/WForms" style="display:contents;text-decoration: none;color:#84d404;"><img src="img/forms.svg" style="width: 25px;height: 25px;"></a>RMS</span>
                 </article>
                 <article id="reference">
-                    <a style="display:contents;text-decoration: none;color:#84d404;"><img src="img/user.svg" style="width: 25px;height: 25px;"><span style="font-size:18px;"><%out.print(actual.getAttribute("USUARIO").toString());%></span></a><div class="cerrar"><a href="http://localhost:8080/WForms/Login?logout=si" style="display:contents;text-decoration: none;"><img src="img/salir.svg" style="width: 25px;height: 25px;"><span style="font-size:12px;">CERRAR SESION</span></a></div></article>
+                    <a style="display:contents;text-decoration: none;color:#84d404;"><img src="img/user.svg" style="width: 25px;height: 25px;"><span style="font-size:18px;"><%out.print(actual.getAttribute("USUARIO").toString());%></span></a><div class="cerrar"><a href="http://localhost:80/WForms/Login?logout=si" style="display:contents;text-decoration: none;"><img src="img/salir.svg" style="width: 25px;height: 25px;"><span style="font-size:12px;">CERRAR SESION</span></a></div></article>
             </div>
         </header>
         <%
@@ -69,7 +69,7 @@
                             </figure>
                             <div style="display:grid;grid-template-columns:auto;">
                                 <button style="color:yellow;background-color:#414242a6;" onclick="window.location = 'Ver?id=<%out.print(fm.getId());%>';">Ver</button>
-                                <button style="color:yellow;background-color:#414242a6;" onclick="mostrarLink('http://localhost:8080/WForms/Ver?id=<%out.print(fm.getId());%>')">Obtén el link!</button>
+                                <button style="color:yellow;background-color:#414242a6;" onclick="mostrarLink('http://localhost:80/WForms/Ver?id=<%out.print(fm.getId());%>')">Obtén el link!</button>
                                 <button style="color:yellow;background-color:#414242a6;" onclick="document.getElementById('link2').click()">Exportalo!</button>
                                 <a id="link2" href="Descargar?id=<%out.print(fm.getId());%>" download="form_<%out.print(fm.getId());%>.form" download hidden></a>
                             </div>
@@ -129,7 +129,7 @@
 
         <%}%>
         <%} else {
-                response.sendRedirect("http://localhost:8080/WForms/");
+                response.sendRedirect("http://localhost:80/WForms/");
             }%>
     </body>
 </html>
