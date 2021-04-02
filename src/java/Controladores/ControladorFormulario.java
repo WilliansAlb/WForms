@@ -56,6 +56,7 @@ public class ControladorFormulario {
                 + "<span class=\"param\">" + encontrado.getId() + "</span></p><p><span class=\"nombre_param\">TEMA:</span> "
                 + "<span class=\"param\">" + encontrado.getTema() + "</span></p></div></div>";
         ArrayList<Componente> comps = encontrado.getComponentes();
+        boolean existe_boton = false;
         for (int i = 0; i < comps.size(); i++) {
             Componente analizado = comps.get(i);
             String alineacion = "";
@@ -91,10 +92,11 @@ public class ControladorFormulario {
                 case "BOTON":
                     retorno += "<div class=\"contenedor " + contenedor + "\">"
                             + "<div class=\"componente " + componente + "\"><input type=\"submit\" value=\"" + analizado.getTexto_visible() + "\"></div></div>";
+                    existe_boton = true;
                     break;
                 case "IMAGEN":
                     retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\">"
-                            + "<label for=\"" + analizado.getId() + "\"><img src=\"" + analizado.getUrl() + "\"></div></div>";
+                            + "<label for=\"" + analizado.getId() + "\">" + analizado.getTexto_visible() + "</label><img width=\"100%\" src=\"" + analizado.getUrl() + "\"></div></div>";
                     break;
                 case "CAMPO_TEXTO":
                     retorno += "<div class=\"contenedor " + contenedor + "\"><div class=\"componente " + componente + "\"><label for=\"" + analizado.getId()
@@ -136,6 +138,11 @@ public class ControladorFormulario {
                     retorno += "<div class=\"contenedor " + contenedor + "\"><h1>ERRORSOTE</h1></div>";
                     break;
             }
+
+        }
+        if (!existe_boton && comps.size() > 0) {
+            retorno += "<div class=\"contenedor " + contenedor + "\">"
+                    + "<div class=\"componente " + componente + "\"><input type=\"submit\" value=\"ENVIAR DATOS\"></div></div>";
 
         }
         retorno += "</form>";
@@ -217,7 +224,7 @@ public class ControladorFormulario {
                         formsDB.add(agregar);
                         actualizarFormularios();
                         retorno += "Se ha creado exitosamente el formulario, lo puedes ver en el link:\n";
-                        retorno += "http://localhost/WForms/Ver?id=" + agregar.getId();
+                        retorno += "http://localhost:80/WForms/Ver?id=" + agregar.getId();
                     } else {
                         int pos = -1;
                         for (int i = 0; i < formsDB.size(); i++) {
@@ -230,7 +237,7 @@ public class ControladorFormulario {
                             formsDB.add(agregar);
                             actualizarFormularios();
                             retorno += "Se ha creado exitosamente el formulario, lo puedes ver en el link:\n";
-                            retorno += "http://localhost/WForms/Ver?id=" + agregar.getId();
+                            retorno += "http://localhost:80/WForms/Ver?id=" + agregar.getId();
                         } else {
                             retorno += "Ya existe un formulario con las mismas caracteristicas que enviaste";
                         }

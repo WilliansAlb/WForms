@@ -8,12 +8,14 @@ function enviarDatos(datos, id, nombre) {
     if (document.forms.length > 0) {
         for (var i = 0; i < document.forms[0].elements.length; i++) {
             var campo = document.forms[0].elements[i];
+            console.log(campo.type +" - "+ campo.value);
             if (campo.id !== '' && campo.value !== '') {
                 if (campo.type === 'textarea' || campo.type === 'text') {
                     var jsonArg1 = new Object();
                     jsonArg1.id = campo.id;
                     jsonArg1.nombre = campo.name;
-                    jsonArg1.registro = campo.value;
+                    var str2 = campo.value.replace(/(\r\n|\n|\r)/gm," ");
+                    jsonArg1.registro = str2;
                     jsonArg1.form = id;
                     jsonArg1.nombref = nombre;
                     pluginArrayArg.push(jsonArg1);
@@ -30,6 +32,16 @@ function enviarDatos(datos, id, nombre) {
                     jsonArg1.id = campo.id;
                     jsonArg1.nombre = campo.name;
                     jsonArg1.registro = campo.value;
+                    jsonArg1.form = id;
+                    jsonArg1.nombref = nombre;
+                    pluginArrayArg.push(jsonArg1);
+                } else if (campo.type === 'file'){
+                    var jsonArg1 = new Object();
+                    jsonArg1.id = campo.id;
+                    jsonArg1.nombre = campo.name;
+                    var partir = campo.value.split("\\");
+                    console.log(partir[2]);
+                    jsonArg1.registro = partir[2];
                     jsonArg1.form = id;
                     jsonArg1.nombref = nombre;
                     pluginArrayArg.push(jsonArg1);

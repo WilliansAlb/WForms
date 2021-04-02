@@ -143,7 +143,7 @@ public class ControladorUsuario {
     }
 
     public String realizarConsultas(Solicitud temp) {
-        String retorno = "   <!ini_respuesta:\"CONSULTAR_DATOS\">\n      {\"CONSULTAS\":[\n";
+        String retorno = "<!ini_respuesta:\"CONSULTAR_DATOS\">\n\t{\"CONSULTAS\":[\n";
         ArrayList<Consulta> cons = temp.getConsulta();
         for (int i = 0; i < cons.size(); i++) {
             Consulta analizando = cons.get(i);
@@ -157,80 +157,61 @@ public class ControladorUsuario {
             }
             if (pos != -1) {
                 Formulario tp = new Formulario();
+                int pos_form = -1;
                 for (int j = 0; j < formsDB.size(); j++) {
                     if (formsDB.get(j).getId().equals(analizando.getForm()) || formsDB.get(j).getNombre().equals(analizando.getForm())) {
                         tp = formsDB.get(j);
+                        pos_form = j;
                         break;
                     }
                 }
-                if (analizando.getRestricciones().isEmpty() && analizando.getCampos().isEmpty()) {
 
-                    //SI SE PIDEN TODOS LOS DATOS QUE CONTENGA EL FORMULARIO
-                    ArrayList<Componente> co = tp.getComponentes();
-                    ArrayList<String> campos_totales = new ArrayList<>();
-                    for (int j = 0; j < co.size(); j++) {
-                        campos_totales.add(co.get(j).getId());
-                    }
-                    Formulario sp = datosDB.get(pos);
-                    ArrayList<Registro> res = sp.getRegistros();
-                    retorno += respuestaConsulta(res, analizando, co, TODOS_LOS_CAMPOS);
-                } else {
-                    if (analizando.getCampos().isEmpty()) {
+                if (pos_form != -1) {
+                    if (analizando.getRestricciones().isEmpty() && analizando.getCampos().isEmpty()) {
 
-                        //SI NO HAY CAMPOS, PERO SI RESTRICCIONES
+                        //SI SE PIDEN TODOS LOS DATOS QUE CONTENGA EL FORMULARIO
                         ArrayList<Componente> co = tp.getComponentes();
-                        int conteo_res = 0;
-                        int conteo_total = 0;
-                        ArrayList<Map<String, String>> soloCondiciones = new ArrayList<>();
-                        ArrayList<String> oplogic = new ArrayList<>();
-                        for (int j = 0; j < analizando.getRestricciones().size(); j++) {
-                            if (!analizando.getRestricciones().get(j).containsKey("OPLOGICO")) {
-                                for (int k = 0; k < co.size(); k++) {
-                                    if (co.get(k).getId().equals(analizando.getRestricciones().get(j).get("CAMPO")) || co.get(k).getNombre_campo().equals(analizando.getRestricciones().get(j).get("CAMPO"))) {
-                                        soloCondiciones.add(analizando.getRestricciones().get(j));
-                                        conteo_res++;
-                                    }
-                                }
-                                conteo_total++;
-                            } else {
-                                oplogic.add(analizando.getRestricciones().get(j).get("OPLOGICO"));
-                            }
+                        ArrayList<String> campos_totales = new ArrayList<>();
+                        for (int j = 0; j < co.size(); j++) {
+                            campos_totales.add(co.get(j).getId());
                         }
-                        if (conteo_res != conteo_total) {
-                            retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                            retorno += "\t\t\"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n\t}";
-                        } else {
-                            ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
-                            for (int j = 0; j < soloCondiciones.size(); j++) {
-                                conjunto.add(concuerda(pos, analizando.getCampos(), soloCondiciones.get(j), co));
-                            }
-                            while (!oplogic.isEmpty()) {
-                                int an = -1;
-                                for (int j = 0; j < oplogic.size(); j++) {
-                                    if (oplogic.get(j).equals("AND")) {
-                                        an = j;
-                                        break;
-                                    }
-                                }
-                                if (an != -1) {
-                                    ArrayList<Registro> r1 = conjunto.get(an);
-                                    ArrayList<Registro> r2 = conjunto.get(an + 1);
-                                    ArrayList<Registro> ret = new ArrayList<>();
-                                    for (int j = 0; j < r1.size(); j++) {
-                                        for (int k = 0; k < r2.size(); k++) {
-                                            if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
-                                                ret.add(r1.get(j));
-                                                break;
-                                            }
+                        Formulario sp = datosDB.get(pos);
+                        ArrayList<Registro> res = sp.getRegistros();
+                        retorno += respuestaConsulta(res, analizando, co, TODOS_LOS_CAMPOS);
+                    } else {
+                        if (analizando.getCampos().isEmpty()) {
+
+                            //SI NO HAY CAMPOS, PERO SI RESTRICCIONES
+                            ArrayList<Componente> co = tp.getComponentes();
+                            int conteo_res = 0;
+                            int conteo_total = 0;
+                            ArrayList<Map<String, String>> soloCondiciones = new ArrayList<>();
+                            ArrayList<String> oplogic = new ArrayList<>();
+                            for (int j = 0; j < analizando.getRestricciones().size(); j++) {
+                                if (!analizando.getRestricciones().get(j).containsKey("OPLOGICO")) {
+                                    for (int k = 0; k < co.size(); k++) {
+                                        if (co.get(k).getId().equals(analizando.getRestricciones().get(j).get("CAMPO")) || co.get(k).getNombre_campo().equals(analizando.getRestricciones().get(j).get("CAMPO"))) {
+                                            soloCondiciones.add(analizando.getRestricciones().get(j));
+                                            conteo_res++;
                                         }
                                     }
-                                    conjunto.set(an, ret);
-                                    conjunto.remove(an + 1);
-                                    oplogic.remove(an);
+                                    conteo_total++;
                                 } else {
-                                    an = -1;
+                                    oplogic.add(analizando.getRestricciones().get(j).get("OPLOGICO"));
+                                }
+                            }
+                            if (conteo_res != conteo_total) {
+                                retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                                retorno += "\t\t\"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n\t}";
+                            } else {
+                                ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
+                                for (int j = 0; j < soloCondiciones.size(); j++) {
+                                    conjunto.add(concuerda(pos, analizando.getCampos(), soloCondiciones.get(j), co));
+                                }
+                                while (!oplogic.isEmpty()) {
+                                    int an = -1;
                                     for (int j = 0; j < oplogic.size(); j++) {
-                                        if (oplogic.get(j).equals("OR")) {
+                                        if (oplogic.get(j).equals("AND")) {
                                             an = j;
                                             break;
                                         }
@@ -239,73 +220,21 @@ public class ControladorUsuario {
                                         ArrayList<Registro> r1 = conjunto.get(an);
                                         ArrayList<Registro> r2 = conjunto.get(an + 1);
                                         ArrayList<Registro> ret = new ArrayList<>();
-                                        ret.addAll(r2);
                                         for (int j = 0; j < r1.size(); j++) {
-                                            boolean ingresado = false;
                                             for (int k = 0; k < r2.size(); k++) {
                                                 if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
-                                                    ingresado = true;
+                                                    ret.add(r1.get(j));
                                                     break;
                                                 }
-                                            }
-                                            if (!ingresado) {
-                                                ret.add(r1.get(j));
                                             }
                                         }
                                         conjunto.set(an, ret);
                                         conjunto.remove(an + 1);
                                         oplogic.remove(an);
-                                    }
-                                }
-                            }
-                            ArrayList<Registro> enviar = conjunto.get(0);
-                            retorno += respuestaConsulta(enviar, analizando, co, SOLO_RESTRICCIONES);
-                        }
-                    } else {
-                        ArrayList<Componente> co = tp.getComponentes();
-                        int conteo = 0;
-                        for (int j = 0; j < co.size(); j++) {
-                            if (analizando.getCampos().contains(co.get(j).getNombre_campo())) {
-                                conteo++;
-                            }
-                        }
-                        if (conteo == analizando.getCampos().size()) {
-                            if (analizando.getRestricciones().isEmpty()) {
-
-                                //SI SE ENVIAN CAMPOS SIN RESTRICCIONES
-                                Formulario sp = datosDB.get(pos);
-                                ArrayList<Registro> res = sp.getRegistros();
-                                retorno += respuestaConsulta(res, analizando, co, SOLO_CAMPOS);
-                            } else {
-                                int conteo_res = 0;
-                                int conteo_total = 0;
-                                ArrayList<Map<String, String>> soloCondiciones = new ArrayList<>();
-                                ArrayList<String> oplogic = new ArrayList<>();
-                                for (int j = 0; j < analizando.getRestricciones().size(); j++) {
-                                    if (!analizando.getRestricciones().get(j).containsKey("OPLOGICO")) {
-                                        for (int k = 0; k < co.size(); k++) {
-                                            if (co.get(k).getId().equals(analizando.getRestricciones().get(j).get("CAMPO")) || co.get(k).getNombre_campo().equals(analizando.getRestricciones().get(j).get("CAMPO"))) {
-                                                soloCondiciones.add(analizando.getRestricciones().get(j));
-                                                conteo_res++;
-                                            }
-                                        }
-                                        conteo_total++;
                                     } else {
-                                        oplogic.add(analizando.getRestricciones().get(j).get("OPLOGICO"));
-                                    }
-                                }
-                                if (conteo_res != conteo_total) {
-                                    retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                                    retorno += "\t\t\"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n\t}";
-                                } else {
-                                    ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
-                                    for (int j = 0; j < soloCondiciones.size(); j++) {
-                                        conjunto.add(concuerda(pos, analizando.getCampos(), soloCondiciones.get(j), co));
-                                    }
-                                    while (!oplogic.isEmpty()) {
-                                        int an = -1;
+                                        an = -1;
                                         for (int j = 0; j < oplogic.size(); j++) {
-                                            if (oplogic.get(j).equals("AND")) {
+                                            if (oplogic.get(j).equals("OR")) {
                                                 an = j;
                                                 break;
                                             }
@@ -314,21 +243,81 @@ public class ControladorUsuario {
                                             ArrayList<Registro> r1 = conjunto.get(an);
                                             ArrayList<Registro> r2 = conjunto.get(an + 1);
                                             ArrayList<Registro> ret = new ArrayList<>();
+                                            ret.addAll(r2);
                                             for (int j = 0; j < r1.size(); j++) {
+                                                boolean ingresado = false;
                                                 for (int k = 0; k < r2.size(); k++) {
                                                     if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
-                                                        ret.add(r1.get(j));
+                                                        ingresado = true;
                                                         break;
                                                     }
+                                                }
+                                                if (!ingresado) {
+                                                    ret.add(r1.get(j));
                                                 }
                                             }
                                             conjunto.set(an, ret);
                                             conjunto.remove(an + 1);
                                             oplogic.remove(an);
+                                        }
+                                    }
+                                }
+                                ArrayList<Registro> enviar = conjunto.get(0);
+                                retorno += respuestaConsulta(enviar, analizando, co, SOLO_RESTRICCIONES);
+                            }
+                        } else {
+                            ArrayList<Componente> co = tp.getComponentes();
+                            int conteo = 0;
+                            ArrayList<String> camps = new ArrayList<>();
+                            for (int j = 0;  j < co.size(); j++) {
+                                if (!camps.contains(co.get(j).getNombre_campo())) {
+                                    camps.add(co.get(j).getNombre_campo());
+                                }
+                            }
+                            for (int j = 0; j < analizando.getCampos().size(); j++) {
+                                if (camps.contains(analizando.getCampos().get(j))) {
+                                    conteo++;
+                                }
+                            }
+                            System.out.println("conteo"+conteo+" "+camps.size());
+                            if (conteo == analizando.getCampos().size()) {
+                                if (analizando.getRestricciones().isEmpty()) {
+
+                                    //SI SE ENVIAN CAMPOS SIN RESTRICCIONES
+                                    Formulario sp = datosDB.get(pos);
+                                    ArrayList<Registro> res = sp.getRegistros();
+                                    retorno += respuestaConsulta(res, analizando, co, SOLO_CAMPOS);
+                                } else {
+                                    int conteo_res = 0;
+                                    int conteo_total = 0;
+                                    ArrayList<Map<String, String>> soloCondiciones = new ArrayList<>();
+                                    ArrayList<String> oplogic = new ArrayList<>();
+                                    for (int j = 0; j < analizando.getRestricciones().size(); j++) {
+                                        if (!analizando.getRestricciones().get(j).containsKey("OPLOGICO")) {
+                                            for (int k = 0; k < co.size(); k++) {
+                                                if (co.get(k).getId().equals(analizando.getRestricciones().get(j).get("CAMPO")) || co.get(k).getNombre_campo().equals(analizando.getRestricciones().get(j).get("CAMPO"))) {
+                                                    soloCondiciones.add(analizando.getRestricciones().get(j));
+                                                    conteo_res++;
+                                                }
+                                            }
+                                            conteo_total++;
                                         } else {
-                                            an = -1;
+                                            oplogic.add(analizando.getRestricciones().get(j).get("OPLOGICO"));
+                                        }
+                                    }
+                                    if (conteo_res != conteo_total) {
+                                        retorno += "\t\t\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
+                                        retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                                        retorno += "\t\t\"DESCRIPCION\":\"UNA O VARIAS RESTRICCIONES INCLUIAN CAMPOS QUE NO EXISTEN EN EL FORMULARIO\"\n\t}";
+                                    } else {
+                                        ArrayList<ArrayList<Registro>> conjunto = new ArrayList<>();
+                                        for (int j = 0; j < soloCondiciones.size(); j++) {
+                                            conjunto.add(concuerda(pos, analizando.getCampos(), soloCondiciones.get(j), co));
+                                        }
+                                        while (!oplogic.isEmpty()) {
+                                            int an = -1;
                                             for (int j = 0; j < oplogic.size(); j++) {
-                                                if (oplogic.get(j).equals("OR")) {
+                                                if (oplogic.get(j).equals("AND")) {
                                                     an = j;
                                                     break;
                                                 }
@@ -337,39 +326,68 @@ public class ControladorUsuario {
                                                 ArrayList<Registro> r1 = conjunto.get(an);
                                                 ArrayList<Registro> r2 = conjunto.get(an + 1);
                                                 ArrayList<Registro> ret = new ArrayList<>();
-                                                ret.addAll(r2);
                                                 for (int j = 0; j < r1.size(); j++) {
-                                                    boolean ingresado = false;
                                                     for (int k = 0; k < r2.size(); k++) {
                                                         if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
-                                                            ingresado = true;
+                                                            ret.add(r1.get(j));
                                                             break;
                                                         }
-                                                    }
-                                                    if (!ingresado) {
-                                                        ret.add(r1.get(j));
                                                     }
                                                 }
                                                 conjunto.set(an, ret);
                                                 conjunto.remove(an + 1);
                                                 oplogic.remove(an);
+                                            } else {
+                                                an = -1;
+                                                for (int j = 0; j < oplogic.size(); j++) {
+                                                    if (oplogic.get(j).equals("OR")) {
+                                                        an = j;
+                                                        break;
+                                                    }
+                                                }
+                                                if (an != -1) {
+                                                    ArrayList<Registro> r1 = conjunto.get(an);
+                                                    ArrayList<Registro> r2 = conjunto.get(an + 1);
+                                                    ArrayList<Registro> ret = new ArrayList<>();
+                                                    ret.addAll(r2);
+                                                    for (int j = 0; j < r1.size(); j++) {
+                                                        boolean ingresado = false;
+                                                        for (int k = 0; k < r2.size(); k++) {
+                                                            if (r1.get(j).getNoregistro().equals(r2.get(k).getNoregistro())) {
+                                                                ingresado = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        if (!ingresado) {
+                                                            ret.add(r1.get(j));
+                                                        }
+                                                    }
+                                                    conjunto.set(an, ret);
+                                                    conjunto.remove(an + 1);
+                                                    oplogic.remove(an);
+                                                }
                                             }
                                         }
+                                        ArrayList<Registro> enviar = conjunto.get(0);
+                                        retorno += respuestaConsulta(enviar, analizando, co, AMBOS);
                                     }
-                                    ArrayList<Registro> enviar = conjunto.get(0);
-                                    retorno += respuestaConsulta(enviar, analizando, co, AMBOS);
                                 }
+                            } else {
+                                retorno += "\t\t\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
+                                retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                                retorno += "\t\t\"DESCRIPCION\":\"UNO O VARIOS CAMPOS QUE SOLICITASTE NO FORMAN PARTE DE LOS COMPONENTES DEL FORMULARIO\"\n\t}";
                             }
-                        } else {
-                            retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                            retorno += "\t\t\"DESCRIPCION\":\"UNO O VARIOS CAMPOS QUE SOLICITASTE NO FORMAN PARTE DE LOS COMPONENTES DEL FORMULARIO\"\n\t}";
                         }
                     }
+                } else {
+                    retorno += "\t\t\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
+                    retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
+                    retorno += "\t\t\"DESCRIPCION\":\"EL FORMULARIO CONTIENE DATOS DE UNA VERSION ELIMINADA, POR LO QUE TU CONSULTA NO DEVUELVE NADA\"\n";
                 }
-
             } else {
+                retorno += "\t\t\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
                 retorno += "\t\t\"ESTADO\":\"CONSULTA NO REALIZADA\",\n";
-                retorno += "\t\t\"DESCRIPCION\":\"EL FORMULARIO AUN NO TIENE DATOS INGRESADOS, POR LO QUE TU CONSULTA NO DEVUELVE NADA\"\n\t}";
+                retorno += "\t\t\"DESCRIPCION\":\"EL FORMULARIO AUN NO TIENE DATOS INGRESADOS, POR LO QUE TU CONSULTA NO DEVUELVE NADA\"\n";
             }
             if ((i + 1) != cons.size()) {
                 retorno += "\t},\n";
@@ -377,7 +395,7 @@ public class ControladorUsuario {
                 retorno += "\t}\n";
             }
         }
-        retorno += "         ]\n      }\n   <fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -395,7 +413,7 @@ public class ControladorUsuario {
      */
     public String respuestaConsulta(ArrayList<Registro> res, Consulta analizando, ArrayList<Componente> co, int opcion) {
         String retorno = "";
-        String t3 = "\t";
+        String t3 = "\t\t";
         retorno += t3 + "\"ID_CONSULTA\":\"" + analizando.getNoconsulta() + "\",\n";
         consultades += analizando.getNoconsulta() + "\n";
         switch (opcion) {
@@ -521,6 +539,8 @@ public class ControladorUsuario {
                 retorno += t3 + "}";
                 if ((j + 1) != res.size()) {
                     retorno += ",\n";
+                } else {
+                    retorno += "]\n";
                 }
             }
             for (String s : camposec) {
@@ -531,7 +551,6 @@ public class ControladorUsuario {
                 consultades += s + " <///>";
             }
             consultades += "\t";
-            retorno += "\n" + t3 + "]\n";
         } else {
             consultades += "NO HAY NINGUN REGISTRO\nQUE COINCIDA CON LO SOLICITADO\t";
             retorno += t3 + "\"RESULTADOS\":\"NO SE HALLARON RESULTADOS\"\n";
@@ -681,7 +700,7 @@ public class ControladorUsuario {
                     break;
                 }
             }
-            if (!c.getClase().equals("BOTON") && !c.getClase().equals("IMAGEN") && !c.getClase().equals("FICHERO")) {
+            if (!c.getClase().equals("BOTON") && !c.getClase().equals("IMAGEN")) {
                 if (!encontrado) {
                     Ingreso it = new Ingreso();
                     it.setIdc(c.getId());
@@ -1027,7 +1046,7 @@ public class ControladorUsuario {
                 retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1109,7 +1128,7 @@ public class ControladorUsuario {
                 retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "\t\t]\n}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1186,13 +1205,13 @@ public class ControladorUsuario {
                     retorno += "\n";
                 }
             } else {
-                retorno += "\t\t{\n";
+                retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
                 retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
-                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "\t\t]\n}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1691,10 +1710,10 @@ public class ControladorUsuario {
                 retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
                 retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
-                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1744,11 +1763,11 @@ public class ControladorUsuario {
                 retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
                 retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
-                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
 
-        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1839,11 +1858,11 @@ public class ControladorUsuario {
                 retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
                 retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
-                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
 
-        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1938,10 +1957,10 @@ public class ControladorUsuario {
                 retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
                 retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
-                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
@@ -1985,10 +2004,10 @@ public class ControladorUsuario {
                 retorno += "\t{\n";
                 retorno += obtenerParametrosEnviadosConRepetidos(mapeado);
                 retorno += "\t\t\"ESTADO\":\"ERROR\",\n";
-                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n      }\n";
+                retorno += "\t\t\"DESCRIPCION_ERROR\":\"Existen parametros repetidos en la solicitud\"\n\t}\n";
             }
         }
-        retorno += "\t\t]\n\t}\n<fin_respuesta!>\n";
+        retorno += "\t]}\n<fin_respuesta!>\n";
         return retorno;
     }
 
