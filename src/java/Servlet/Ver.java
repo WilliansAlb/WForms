@@ -73,10 +73,9 @@ public class Ver extends HttpServlet {
 "            <center>\n" +
 "\n" +
 "                <div id=\"mensaje\">\n" +
-"                    <label for=\"link\">El link es: </label>\n" +
-"                    <div id=\"mlink\">\n" +
-"                        <input id=\"link\" type=\"text\" disabled style=\"text-align:center;\"><span class=\"popuptext\" id=\"spam\" style=\"display:none;\">Link copiado al portapapeles!</span><button onclick=\"copiar();\">COPIAR&#x029C9;</button>\n" +
-"                    </div>\n" +
+"                    <label for=\"link\">Resultado: </label>\n" +
+"                    \n" +
+"                    <input id=\"link\" style=\"width: 100%;\" type=\"text\" disabled style=\"text-align:center;\">\n" +
 "                    <button onclick=\"ocultar(document.getElementById('oculto'));\">CERRAR&#x02A2F;</button>\n" +
 "                </div>\n" +
 "            </center>\n" +
